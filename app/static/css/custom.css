@@ -3,12 +3,6 @@
 good light grey #e7e7e7
 Colours
 
-FF4D39 FF6E59
-E82F5E E84C69
-FF40E6 FF61DE
-B82FE8 C64CE8
-8634FF A054FF
-
 Main Primary color
 
 .color-primary-0 { color: #6C256F }
@@ -40,10 +34,9 @@ Main Grays
 
 */
 
-html,
-body {
+body, html {
+  width: 100%;
   height: 100%;
-  /* The html and body elements cannot have any padding or margin. */
 }
 
 .navbar-default {

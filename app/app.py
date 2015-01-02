@@ -75,7 +75,6 @@ def nav(current):
             "path":url_for('archive'),
             "current":("archive" == current.lower())
         },
-
         {
             "name":"Projects",
             "path":url_for('projects'),

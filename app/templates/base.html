@@ -43,13 +43,15 @@
       </div>
 
       <div class="navbar-collapse collapse navbar-responsive-collapse">
+        <!--
         <form class="navbar-form navbar-right">
           <input type="text" class="form-control col-lg-8" placeholder="Search">
         </form>
+        -->
         <ul class="nav navbar-nav navbar-right">
           {% for item in nav %}
           {% if item.dropdown %}
-          <li class="dropdown {% if item.current %}active{% endif %}">
+          <li class="{% if item.current %}active{% endif %} dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="{{item.path}}">{{item.name}} <b class="caret"></b></a>
             <ul class="dropdown-menu">
               {% for subitem in item.subnav %}
@@ -60,7 +62,7 @@
             </ul
           </li>
           {% else %}
-          <li class="{% if item.current %}active{% endif %}">
+          <li class="{% if item.current %}active {% endif %}">
             <a href="{{item.path}}">{{item.name}}</a>
           </li>
           {% endif %}
@@ -98,6 +100,11 @@
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
   <script src="/static/js/ie-emulation-modes-warning.js"></script>
+  <!-- Scrolling Nav JavaScript -->
+  <!--
+  <script src="/static/js/jquery.easing.min.js"></script>
+  <script src="/static/js/scrolling-nav.js"></script>
+-->
   {% endblock javascript %}
 
 </body>
