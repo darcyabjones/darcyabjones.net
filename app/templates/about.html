@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{content.title}}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block navbar %}
+{{ super() }}
+{% endblock navbar %}
+
+{% block content %}
+<h1>{{content.title}}</h1>
+<p>
+  Welcome on my awesome homepage.
+</p>
+{% endblock content %}

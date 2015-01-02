@@ -1,0 +1,147 @@
+/*
+
+good light grey #e7e7e7
+Colours
+
+FF4D39 FF6E59
+E82F5E E84C69
+FF40E6 FF61DE
+B82FE8 C64CE8
+8634FF A054FF
+
+Main Primary color
+
+.color-primary-0 { color: #6C256F }
+.color-primary-1 { color: #440046 }
+.color-primary-2 { color: #58025B }
+.color-primary-3 { color: #815583 }
+.color-primary-4 { color: #979297 }
+
+Main Secondary color (1)
+.color-secondary-1-0 { color: #973253 }
+.color-secondary-1-1 { color: #60001F }
+.color-secondary-1-2 { color: #7B0229 }
+.color-secondary-1-3 { color: #B27488 }
+.color-secondary-1-4 { color: #CEC7C9 }
+
+Main Secondary color (2)
+.color-secondary-2-0 { color: #4A2D73 }
+.color-secondary-2-1 { color: #1F0149 }
+.color-secondary-2-2 { color: #2D0A5E }
+.color-secondary-2-3 { color: #6F5D88 }
+.color-secondary-2-4 { color: #9B999E }
+
+Main Grays
+.color-grays-0 { color: #686763 }
+.color-grays-1 { color: #1F1F1D }
+.color-grays-2 { color: #31312F }
+.color-grays-3 { color: #96948F }
+.color-grays-4 { color: #A2A19B }
+
+*/
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+.navbar-default {
+  background-color: #973253;
+}
+.navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
+  color: #FFFFFF;
+}
+.navbar {
+  border-radius: 0px;
+  min-height: 50px;
+  height:50px;
+  margin-bottom: 0px;
+  border: 0px;
+}
+.navbar-default .navbar-nav>li>a {
+  color: #FFFFFF;
+  height:45px;
+  margin-bottom:5px;
+}
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>a:focus {
+  color: #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #FFFFFF;
+}
+
+.navbar-default .navbar-toggle {
+  border-color: #FFFFFF;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+  background-color: rgba(255,255,255,0.1);
+}
+.navbar-form {
+  border-top: 0px none;
+  border-bottom: 0px none;
+}
+.navbar-collapse {
+  border-top: 0px none;
+}
+
+@media (max-width: 768px) {
+  .container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse, .container-fluid>.navbar-collapse {
+    border-bottom: 0px none;
+    background-color:#973253;
+  }
+  .navbar-default .navbar-nav>li>a {
+    color: #FFFFFF;
+    margin-bottom: 0px;
+    height:50px;
+  }
+  .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>a:focus {
+    border-bottom: 0px none;
+    background-color: rgba(255,255,255,0.1);
+  }
+  #footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.header {
+  display: table;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #973253 no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+  margin-bottom: -50px;
+  padding-bottom: 50px;
+}
+
+.text-vertical-center {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Wrapper for page content to push down footer */
+.wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  padding-top: 50px;
+  margin-bottom: -50px;
+  padding-bottom: 50px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+  height: 50px;
+}
+#footer {
+  border-top: 1px solid #e7e7e7;
+}

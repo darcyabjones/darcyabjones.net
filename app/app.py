@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 __program__ = "app"
 __version__ = "0.1.0"
 __author__ = "Darcy Jones"
@@ -26,22 +28,76 @@ __license__ = """
 
 ################################ Import Modules ################################
 
+import app
 from flask import Flask
 from flask import url_for
+from flask import render_template
+import json
+import os
+
+base_path = os.path.dirname(app.__file__)
+content_path = os.path.join(base_path, 'content')
+
+
+################################ Define Classes ################################
+
+
+############################### Define Functions ###############################
 
 app = Flask(__name__)
 
+def update(path):
+    """
+    """
+    import json
+    try:
+        json_handle = open(path, 'r')
+        json_content = json.load(json_handle)
+    except ValueError:
+        print("The JSON has a formatting error.")
+        raise
+    finally:
+        json_handle.close()
+    return json_content
+
+def nav(current):
+    """
+    """
+    from flask import url_for
+    nav_list = [
+        {
+            "name":"Home",
+            "path":url_for('index'),
+            "current":(current.lower() in {"home", "index"})
+        },
+        {
+            "name":"Archive",
+            "path":url_for('archive'),
+            "current":("archive" == current.lower())
+        },
+
+        {
+            "name":"Projects",
+            "path":url_for('projects'),
+            "current":("projects" == current.lower())
+        },
+        {
+            "name":"About",
+            "path":url_for('about'),
+            "current":("about" == current.lower())
+        }
+    ]
+    return nav_list
+
 @app.route('/')
 def index():
-    return 'index page'
+    content = update(path=os.path.join(content_path, "index.json"))
+    return render_template('index.html', nav=nav("Home"), content=content)
 
-@app.route('/user/<username>')
-def show_user_profile(username):
-    return "User {}".format(username)
-
-@app.route('/post/')
-def blog():
-    return "This is the blog,"
+@app.route('/archive/')
+def archive():
+    content = update(path=os.path.join(content_path, "archive.json"))
+    return render_template('archive.html', nav=nav("Archive"), content=content)
 
 @app.route('/post/<int:post_id>')
 def show_post(post_id):
@@ -49,11 +105,16 @@ def show_post(post_id):
 
 @app.route('/projects/')
 def projects():
-    return 'The project page'
+    content = update(path=os.path.join(content_path, "projects.json"))
+    return render_template('projects.html', nav=nav("Projects"), content=content)
 
 @app.route('/about')
 def about():
-    return 'The about page'
+    content = update(path=os.path.join(content_path, "about.json"))
+    return render_template('about.html', nav=nav("About"), content=content)
+
+
+##################################### Code #####################################
 
 if __name__ == '__main__':
     app.run(debug=True) # host='0.0.0.0' # Ditch debug on production.

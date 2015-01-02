@@ -1,4 +1,5 @@
-__program__ = "darcyabjones"
+#! /usr/bin/env python3
+__program__ = "run"
 __version__ = "0.1.0"
 __author__ = "Darcy Jones"
 __date__ = "30 December 2014"
@@ -24,16 +25,7 @@ __license__ = """
 ##############################################################################
 """
 
-from flask import Flask
-from flask import request
-from flask import session
-from flask import g
-from flask import redirect
-from flask import url_for
-from flask import abort
-from flask import render_template
-from flask import flash
+from app import app
 
-# create our little application :)
-app = Flask(__name__)
-app.config.from_object(__name__)
+if __name__ == '__main__':
+    app.app.run(debug=True)
