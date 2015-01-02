@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{content.title}}{% endblock %}
+{% block title %}{{page.title}}{% endblock title %}
 
 {% block head %}
   {{ super() }}
@@ -10,18 +10,11 @@
 {% endblock navbar %}
 
 {% block header %}
-  <div class="header container">writing</div>
-{% endblock header %}
+  <div class="header container">
+    <h1 class="text-vertical-center">
 
-{% block content %}
-  <h1 id="blog">{{content.title}}</h1>
-  <p>
-    Welcome on my awesome homepage.
-  </p>
-  <div class="panel panel-default">
-    <div class="panel-heading">Panel heading</div>
-    <div class="panel-body">
-      Panel content
-    </div>
+    </h1>
   </div>
-{% endblock content %}
+{% endblock header %}
+{% block content %}{% endblock content %}
+{% block footer %}{% endblock footer %}

@@ -31,6 +31,7 @@ __license__ = """
 import app
 from flask import Flask
 from flask import url_for
+from flask import redirect
 from flask import render_template
 import json
 import os
@@ -71,19 +72,19 @@ def nav(current):
             "current":(current.lower() in {"home", "index"})
         },
         {
-            "name":"Archive",
-            "path":url_for('archive'),
-            "current":("archive" == current.lower())
+            "name":"Blog",
+            "path":url_for('blog'),
+            "current":(current.lower() in {"blog", "archive", "post"})
         },
         {
             "name":"Projects",
             "path":url_for('projects'),
-            "current":("projects" == current.lower())
+            "current":(current.lower() == "projects")
         },
         {
             "name":"About",
             "path":url_for('about'),
-            "current":("about" == current.lower())
+            "current":(current.lower() == "about")
         }
     ]
     return nav_list
@@ -91,26 +92,36 @@ def nav(current):
 @app.route('/')
 def index():
     content = update(path=os.path.join(content_path, "index.json"))
-    return render_template('index.html', nav=nav("Home"), content=content)
+    return render_template('index.html', nav=nav("Home"), page=content)
+
+@app.route('/blog/')
+def blog():
+    content = update(path=os.path.join(content_path, "blog.json"))
+    return render_template('blog.html', nav=nav("Blog"), page=content)
 
 @app.route('/archive/')
+def archive_redirect():
+    return redirect(url_for('archive'))
+
+@app.route('/posts/')
 def archive():
     content = update(path=os.path.join(content_path, "archive.json"))
-    return render_template('archive.html', nav=nav("Archive"), content=content)
+    return render_template('archive.html', nav=nav("Archive"), page=content)
 
-@app.route('/post/<int:post_id>')
+@app.route('/posts/<int:post_id>')
 def show_post(post_id):
-    return "Post {}".format(post_id)
+    content = update(path=os.path.join(content_path, "archive.json"))
+    return render_template('post.html', nav=nav("Post"), page=content)
 
 @app.route('/projects/')
 def projects():
     content = update(path=os.path.join(content_path, "projects.json"))
-    return render_template('projects.html', nav=nav("Projects"), content=content)
+    return render_template('projects.html', nav=nav("Projects"), page=content)
 
 @app.route('/about')
 def about():
     content = update(path=os.path.join(content_path, "about.json"))
-    return render_template('about.html', nav=nav("About"), content=content)
+    return render_template('about.html', nav=nav("About"), page=content)
 
 
 ##################################### Code #####################################
