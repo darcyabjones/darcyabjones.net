@@ -1,17 +1,49 @@
 {% extends "base.html" %}
 {% block title %}{{page.title}}{% endblock title %}
 
-{% block head %}
-{{ super() }}
-{% endblock head %}
-
-{% block navbar %}
-{{ super() }}
-{% endblock navbar %}
-
 {% block content_content %}
-  <h1>{{page.title}}</h1>
-  <p>
-    Welcome on my awesome homepage.
-  </p>
+  <div class="row">
+    <div class="col-md-5 col-md-offset-2 col-lg-5 col-lg-offset-2 col-sm-7 col-sm-offset-1" id="blog-main-column">
+      <!-- the actual blog post: title/author/date/content -->
+      <h2>Blog Post Template for Bootstrap</h1>
+      <p>
+        <div class="header-icons" style="margin-left:0px;">
+          <i class="fa fa-user"></i>
+          Super User
+        </div>
+        <div class="header-icons">
+          <i class="fa fa-calendar"></i>
+          August 24, 2014
+        </div>
+        <div class="header-icons">
+          <i class="fa fa-clock-o"></i>
+          9:00
+        </div>
+        <div class="clear"></div>
+        <i class="fa fa-tags"></i>
+        <a href="">
+          <span class="badge badge-info">Bootstrap</span>
+        </a>
+      </p>
+
+      <p>Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor.</p>
+
+      <a href="#" class="more"><i class="fa fa-angle-double-right"></i> read more</a>
+      <div class="clear"></div>
+      <hr>
+    </div>
+    <div class="col-md-3 col-lg-3 col-sm-3" id="blog-side-nav">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title"><i class="fa fa-tags"></i> Tags</h4>
+        </div>
+        <div class="panel-body">
+          <a href="">
+            <span class="badge badge-info">Bootstrap</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
 {% endblock content_content %}

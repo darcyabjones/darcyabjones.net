@@ -55,7 +55,7 @@ body, html {
 .navbar-default .navbar-nav>li>a {
   color: #FFFFFF;
   height:45px;
-  margin-bottom:5px;
+  margin-bottom:0.5em;
 }
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>a:focus {
   color: #FFFFFF;
@@ -94,8 +94,8 @@ body, html {
     background-color: rgba(255,255,255,0.1);
   }
   #footer {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 2em;
+    padding-right: 2em;
   }
 }
 
@@ -109,6 +109,7 @@ body, html {
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
+  padding-top:50px;
   margin-bottom: -50px;
   padding-bottom: 50px;
 }
@@ -126,10 +127,9 @@ body, html {
   height: 100%;
   /* Negative indent footer by it's height */
   padding-top: 50px;
-  margin-bottom: -50px;
-  padding-bottom: 50px;
+  margin-bottom: -125px;
+  padding-bottom: 125px;
 }
-
 /* Set the fixed height of the footer here */
 #push,
 #footer {
@@ -137,4 +137,76 @@ body, html {
 }
 #footer {
   border-top: 1px solid #e7e7e7;
+}
+.share-button {
+  margin-left:1em;
+  float:left;
+}
+.clear {
+  clear:both;
+}
+.more {
+  text-align:right;
+  float:right;
+  margin-left: 2em;
+  margin-right: 1em;
+}
+.header-icons {
+  float:left;
+  margin-left:10px;
+}
+#footer-copy-info {
+  margin-top:1em;
+}
+#home-me-icons {
+  margin-top:3em;
+  text-align:center;
+  font-size:2em;
+}
+#footer-me-icons {
+  margin-top:0.5em;
+  font-size:1.5em;
+}
+#footer-me-icons .me-icons {
+  color:#555555;
+}
+#home-me-icons .me-icons {
+  color:#FFFFFF;
+}
+#footer-me-icons .me-icons:hover, #footer-me-icons .me-icons:focus {
+  color:#158cba;
+  text-decoration:none;
+}
+#home-me-icons .me-icons:hover, #home-me-icons .me-icons:focus {
+  color:rgba(255,255,255,0.6);
+  text-decoration:none;
+};
+#home-heading {
+  margin-top:2em;
+  font-size:1.5em;
+  text-align:center;
+  color:#FFFFFF;
+}
+#home-blurb {
+  margin-top:2em;
+  font-size:1.1em;
+  color:#FFFFFF;
+}
+#home-portrait {
+  margin-top:3em;
+}
+#home-blog-link {
+  margin-top:1em;
+  text-align:center;
+  font-size:3.5em;
+}
+#home-blog-link a {
+  color:#FFFFFF;
+}
+#home-blog-link a:hover, #home-blog-link a:focus {
+  text-decoration:none;
+  color:rgba(255,255,255,0.6)
+}
+#blog-side-nav {
+  padding-top:1em;
 }

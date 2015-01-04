@@ -35,10 +35,12 @@ from flask import redirect
 from flask import render_template
 import json
 import os
+import pypandoc
 
 base_path = os.path.dirname(app.__file__)
 content_path = os.path.join(base_path, 'content')
-
+posts = os.path.join(content_path, 'posts')
+posts_raw = os.path.join(content_path, 'posts_raw')
 
 ################################ Define Classes ################################
 
@@ -88,6 +90,35 @@ def nav(current):
         }
     ]
     return nav_list
+
+def process_raw_posts(path):
+    """
+    """
+    from os import listdir
+    from os.path import isfile
+    from os.path import join
+    from os.path import splitext
+    import pypandoc
+    import pweave
+
+    knitr_extensions = {"rmd", "rnw"}
+    pweave_extensions = {"pmd", "pnw"}
+    pandoc_extensions = {"md,"}
+    extensions = knitr_extensions + pweave_extensions + pandoc_extensions
+
+    raw_files_ = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
+    raw_files = [f for f in raw_files_ if splitext(f)[1] in extensions]
+
+    while len(raw_files) > 0:
+        current_ext = splitext(raw_files[0])[1]
+        if current_ext in knitr_extensions:
+            pass
+        elif current_ext in pweave_extensions:
+            pass
+        elif current_ext in pandoc_extensions:
+            pass
+    return
+
 
 @app.route('/')
 def index():

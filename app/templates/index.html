@@ -11,9 +11,54 @@
 
 {% block header %}
   <div class="header container">
-    <h1 class="text-vertical-center">
-
-    </h1>
+    <div class="row">
+      <div id="home-portrait" class="col-sm-12 col-md-12 col-lg-12">
+        <div style="background-color:black;width:20%;height:300px;margin-left:auto;margin-right:auto"></div>
+      </div>
+    </div>
+    <!-- div class="row">
+      <div id="home-heading" class="col-sm-12 col-md-6 col-md-offset-3 col-lg-6 col-lg-offest-3">
+          Darcy Jones
+      </div>
+    </div -->
+    <div class="row">
+      <div id="home-blurb" class="col-sm-12 col-md-6 col-md-offset-3 col-lg-6 col-lg-offest-3">
+        This is a blurb. This is a blurb. This is a blurb. This is a blurb. This is a blurb. This is a blurb.
+      </div>
+    </div>
+    <div class="row">
+      <div id="home-me-icons" class="col-sm-12 col-md-12 col-lg-12">
+        <a title="Twitter" href="https://twitter.com/darcyabjones" class="me-icons">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a title="Linkedin" href="http://au.linkedin.com/in/darcyabjones" class="me-icons">
+          <i class="fa fa-linkedin"></i>
+        </a>
+        <a title="GitHub" href="https://github.com/darcyabjones" class="me-icons">
+          <i class="fa fa-github"></i>
+        </a>
+        <a title="Bitbucket" href="https://bitbucket.org/darcyabjones" class="me-icons">
+          <i class="fa fa-bitbucket"></i>
+        </a>
+        <a title="ResearchGate" href="https://www.researchgate.net/profile/Darcy_Jones" class="me-icons">
+          <i class="ai ai-researchgate"></i>
+        </a>
+        <a title="Mendeley" href="http://www.mendeley.com/profiles/darcy-jones/" class="me-icons">
+          <i class="ai ai-mendeley"></i>
+        </a>
+        <a title="StackExchance" href="http://stackexchange.com/users/4027279/darcyabjones" class="me-icons">
+          <i class="fa fa-stack-exchange"></i>
+        </a>
+        <a title="Slideshare" href="http://www.slideshare.net/darcyabjones" class="me-icons">
+          <i class="fa fa-slideshare"></i>
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div id="home-blog-link" class="col-sm-12 col-md-12 col-lg-12">
+        <a title="Continue to blog" href="{{ url_for('blog') }}"><i class="fa fa-chevron-circle-right"></i></a>
+      </div>
+    </div>
   </div>
 {% endblock header %}
 {% block content %}{% endblock content %}

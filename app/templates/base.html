@@ -37,16 +37,15 @@
   <div class="navbar navbar-default navbar-fixed-top" name='navbar'>
     <div class="container">
       <div class="navbar-header">
+        <a class="navbar-brand" href="/">darcyabjones</a>
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">darcyabjones</a>
       </div>
-
       <div class="navbar-collapse collapse navbar-responsive-collapse" role="navigation">
-        <!--
+        <!-- Search bar
         <form class="navbar-form navbar-right">
           <input type="text" class="form-control col-lg-8" placeholder="Search">
         </form>
@@ -72,9 +71,7 @@
           {% endfor %}
         </ul>
       </div>
-
   </div> <!-- end container -->
-
   </div> <!-- end navbar -->
   {% endblock navbar %}
 
@@ -91,35 +88,37 @@
   {% block footer %}
   <div id="footer" name="footer" class="container">
     {% block footer_content %}
-    <p>Copyright &copy; Darcy Jones | <a href="">Privacy Policy</a> | <a href="">Terms of Use</a></p>
-    <p>
-      <a title="Twitter" href="https://twitter.com/darcyabjones">
-        <i class="fa fa-twitter"></i>
-      </a>
-      <a title="Linkedin" href="http://au.linkedin.com/in/darcyabjones">
-          <i class="fa fa-linkedin"></i>
-      </a>
-      <a title="GitHub" href="https://github.com/darcyabjones">
-        <i class="fa fa-github"></i>
-      </a>
-      <a title="Bitbucket" href="https://bitbucket.org/darcyabjones">
-        <i class="fa fa-bitbucket"></i>
-      </a>
-      <a title="ResearchGate" href="https://www.researchgate.net/profile/Darcy_Jones">
-        <i class="ai ai-researchgate"></i>
-      </a>
-      <a title="Mendeley" href="http://www.mendeley.com/profiles/darcy-jones/">
-        <i class="ai ai-mendeley"></i>
-      </a>
-      <a title="StackExchance" href="http://stackexchange.com/users/4027279/darcyabjones">
-        <i class="fa fa-stack-exchange"></i>
-      </a>
-      <a title="Slideshare" href="http://www.slideshare.net/darcyabjones">
-        <i class="fa fa-slideshare"></i>
-      </a>
-
-
-    </p>
+      <div class="row">
+        <div id="footer-copy-info" class="col-sm-8 col-md-5 col-md-offset-2 col-lg-5 col-lg-offset-2">
+            Copyright&nbsp;&copy; Darcy&nbsp;Jones | <a href="">Privacy&nbsp;Policy</a> | <a href="">Terms&nbsp;of&nbsp;Use</a>
+        </div>
+        <div id="footer-me-icons" class="col-sm-4 col-md-3 col-lg-3">
+            <a title="Twitter" href="https://twitter.com/darcyabjones" class="me-icons">
+              <i class="fa fa-twitter"></i>
+            </a>
+            <a title="Linkedin" href="http://au.linkedin.com/in/darcyabjones" class="me-icons">
+              <i class="fa fa-linkedin"></i>
+            </a>
+            <a title="GitHub" href="https://github.com/darcyabjones" class="me-icons">
+              <i class="fa fa-github"></i>
+            </a>
+            <a title="Bitbucket" href="https://bitbucket.org/darcyabjones" class="me-icons">
+              <i class="fa fa-bitbucket"></i>
+            </a>
+            <a title="ResearchGate" href="https://www.researchgate.net/profile/Darcy_Jones" class="me-icons">
+              <i class="ai ai-researchgate"></i>
+            </a>
+            <a title="Mendeley" href="http://www.mendeley.com/profiles/darcy-jones/" class="me-icons">
+              <i class="ai ai-mendeley"></i>
+            </a>
+            <a title="StackExchance" href="http://stackexchange.com/users/4027279/darcyabjones" class="me-icons">
+              <i class="fa fa-stack-exchange"></i>
+            </a>
+            <a title="Slideshare" href="http://www.slideshare.net/darcyabjones" class="me-icons">
+              <i class="fa fa-slideshare"></i>
+            </a>
+        </div>
+      </div>
     {% endblock footer_content %}
   </div> <!-- end footer -->
   {% endblock footer %}
@@ -127,17 +126,14 @@
   {% block javascript %}
   <!-- Bootstrap core JavaScript
   ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
   <script src="/static/js/jquery.min.js"></script>
   <script src="/static/js/bootstrap.min.js"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
   <script src="/static/js/ie-emulation-modes-warning.js"></script>
   <!-- Scrolling Nav JavaScript -->
-  <!--
-  <script src="/static/js/jquery.easing.min.js"></script>
-  <script src="/static/js/scrolling-nav.js"></script>
--->
+  <!-- script src="/static/js/jquery.easing.min.js"></script>
+  <script src="/static/js/scrolling-nav.js"></script -->
   {% endblock javascript %}
 
 </body>
