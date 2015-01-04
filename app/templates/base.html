@@ -37,7 +37,7 @@
   <div class="navbar navbar-default navbar-fixed-top" name='navbar'>
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">darcyabjones</a>
+        <a id="navbar-brand" class="navbar-brand" href="/">DARCY AB JONES</a>
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -54,18 +54,18 @@
           {% for item in nav %}
           {% if item.dropdown %}
           <li class="{% if item.current %}active{% endif %} dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="{{item.path}}">{{item.name}} <b class="caret"></b></a>
+            <a class="dropdown-toggle nav-item" data-toggle="dropdown" href="{{item.path}}">{{item.name}} <b class="caret"></b></a>
             <ul class="dropdown-menu">
               {% for subitem in item.subnav %}
               <li>
-                <a href="{{subitem.path}}">{{subitem.name}}</a>
+                <a href="{{subitem.path}}" class="nav-item">{{subitem.name}}</a>
               </li>
               {% endfor %}
             </ul
           </li>
           {% else %}
           <li class="{% if item.current %}active {% endif %}">
-            <a href="{{item.path}}">{{item.name}}</a>
+            <a href="{{item.path}}" class="nav-item">{{item.name}}</a>
           </li>
           {% endif %}
           {% endfor %}
@@ -90,20 +90,11 @@
     {% block footer_content %}
       <div class="row">
         <div id="footer-copy-info" class="col-sm-8 col-md-5 col-md-offset-2 col-lg-5 col-lg-offset-2">
-            Copyright&nbsp;&copy; Darcy&nbsp;Jones | <a href="">Privacy&nbsp;Policy</a> | <a href="">Terms&nbsp;of&nbsp;Use</a>
+            Copyright&nbsp;&copy; Darcy&nbsp;Jones <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img id="licensebutton_slim" alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"></a> | <a href="">Terms&nbsp;of&nbsp;Use</a>
         </div>
         <div id="footer-me-icons" class="col-sm-4 col-md-3 col-lg-3">
             <a title="Twitter" href="https://twitter.com/darcyabjones" class="me-icons">
               <i class="fa fa-twitter"></i>
-            </a>
-            <a title="Linkedin" href="http://au.linkedin.com/in/darcyabjones" class="me-icons">
-              <i class="fa fa-linkedin"></i>
-            </a>
-            <a title="GitHub" href="https://github.com/darcyabjones" class="me-icons">
-              <i class="fa fa-github"></i>
-            </a>
-            <a title="Bitbucket" href="https://bitbucket.org/darcyabjones" class="me-icons">
-              <i class="fa fa-bitbucket"></i>
             </a>
             <a title="ResearchGate" href="https://www.researchgate.net/profile/Darcy_Jones" class="me-icons">
               <i class="ai ai-researchgate"></i>
@@ -111,11 +102,20 @@
             <a title="Mendeley" href="http://www.mendeley.com/profiles/darcy-jones/" class="me-icons">
               <i class="ai ai-mendeley"></i>
             </a>
-            <a title="StackExchance" href="http://stackexchange.com/users/4027279/darcyabjones" class="me-icons">
-              <i class="fa fa-stack-exchange"></i>
+            <a title="Linkedin" href="http://au.linkedin.com/in/darcyabjones" class="me-icons">
+              <i class="fa fa-linkedin"></i>
             </a>
             <a title="Slideshare" href="http://www.slideshare.net/darcyabjones" class="me-icons">
               <i class="fa fa-slideshare"></i>
+            </a>
+            <a title="GitHub" href="https://github.com/darcyabjones" class="me-icons">
+              <i class="fa fa-github"></i>
+            </a>
+            <a title="Bitbucket" href="https://bitbucket.org/darcyabjones" class="me-icons">
+              <i class="fa fa-bitbucket"></i>
+            </a>
+            <a title="StackExchance" href="http://stackexchange.com/users/4027279/darcyabjones" class="me-icons">
+              <i class="fa fa-stack-exchange"></i>
             </a>
         </div>
       </div>

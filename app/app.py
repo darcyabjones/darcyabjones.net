@@ -39,7 +39,8 @@ import pypandoc
 
 base_path = os.path.dirname(app.__file__)
 content_path = os.path.join(base_path, 'content')
-posts = os.path.join(content_path, 'posts')
+posts_html = os.path.join(content_path, 'posts')
+posts_processed = os.path.join(content_path, 'posts_processed')
 posts_raw = os.path.join(content_path, 'posts_raw')
 
 ################################ Define Classes ################################
@@ -50,8 +51,7 @@ posts_raw = os.path.join(content_path, 'posts_raw')
 app = Flask(__name__)
 
 def update(path):
-    """
-    """
+    """    """
     import json
     try:
         json_handle = open(path, 'r')
@@ -64,8 +64,7 @@ def update(path):
     return json_content
 
 def nav(current):
-    """
-    """
+    """    """
     from flask import url_for
     nav_list = [
         {
@@ -91,34 +90,202 @@ def nav(current):
     ]
     return nav_list
 
-def process_raw_posts(path):
-    """
-    """
+def process_raw_posts(path, completed_path, html_path):
+    """    """
     from os import listdir
+    from os import remove
     from os.path import isfile
     from os.path import join
     from os.path import splitext
+    from os.path import split
+    from shutil import copy2
+    from shutil import move
     import pypandoc
-    import pweave
+    import json
 
-    knitr_extensions = {"rmd", "rnw"}
-    pweave_extensions = {"pmd", "pnw"}
-    pandoc_extensions = {"md,"}
+    knitr_extensions = {".rmd", ".rnw"}
+    pweave_extensions = {".pmd", ".pnw"}
+    pandoc_extensions = {".md",}
     extensions = knitr_extensions + pweave_extensions + pandoc_extensions
 
-    raw_files_ = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
-    raw_files = [f for f in raw_files_ if splitext(f)[1] in extensions]
+    raw_files__ = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
+    raw_files_ = [f for f in raw_files__ if splitext(f)[1] in extensions]
+    raw_files = [join(path, f) for f in raw_files_ ]
+
+    for raw_file, completed_file in zip(raw_files, raw_files_):
+        copy2(src=raw_file, dst=join(completed_path, completed_file))
 
     while len(raw_files) > 0:
-        current_ext = splitext(raw_files[0])[1]
-        if current_ext in knitr_extensions:
-            pass
-        elif current_ext in pweave_extensions:
-            pass
-        elif current_ext in pandoc_extensions:
-            pass
+        current_file = raw_files.pop(0)
+        current_ext = splitext(current_file)[1]
+        next_file = next_md_path(current_file)
+        if current_ext.lower() in knitr_extensions:
+            output = call_knitr(
+                input_file=current_file,
+                output_file=next_file,
+                figure_path=generate_dir_path(current_file, 'figures'),
+                cache_path=generate_dir_path(current_file, 'cache')
+            )
+            raw_files.append(next_file)
+            remove(current_file)
+        elif current_ext.lower() in pweave_extensions:
+            output = call_pweave(
+                input_file=current_file,
+                output_file=next_file,
+                figure_path=generate_dir_path(current_file, 'figures'),
+                cache_path=generate_dir_path(current_file, 'cache')
+            )
+            raw_files.append(next_file)
+            remove(current_file)
+        elif current_ext.lower() in pandoc_extensions:
+            yaml, markdown = process_md(current_file)
+            output = pypandoc.convert(
+                source=markdown,
+                to='html5',
+                format='markdown',
+                extra_args=[]
+            )
+            new_html_path = join(
+                html_path,
+                splitext(split(current_file)[1])[0]
+            )
+            html_file = new_html_path + ".html"
+            with open(html_file, 'w') as html_handle:
+                html_handle.write(output)
+            json_file = new_html_path + ".json"
+            with open(json_file, 'w') as json_handle:
+                json.dump(yaml, json_handle)
+            move(
+                src=generate_dir_path(current_file, 'figures'),
+                dst=next_path + "-figures"
+            )
+            move(
+                src=generate_dir_path(current_file, 'cache'),
+                dst=next_path + "-cache"
+            )
     return
 
+def process_md(md_path):
+    """    """
+    import re
+    # Boundary is three or more '.' or '-'.
+    yaml_boundary = re.compile("(-{3,}|\.{3,})")
+    blankline = True
+    yaml_block = False
+    markdown = list()
+    yaml = list()
+    current_yaml = list()
+    with open(md_path, 'rU') as md_handle:
+        for line in md_handle:
+            if yaml_boundary.match(line.strip()) != None:
+                if yaml_block:
+                    yaml_block = False
+                    yaml.append("\n".join(current_yaml))
+                    current_yaml = list()
+                else:
+                    yaml_block = True
+            elif line.strip == '':
+                blankline = True
+            elif yaml_block:
+                current_yaml.append(line)
+            else:
+                markdown.append(line)
+    return "\n".join(markdown), process_yaml(yaml)
+
+def process_yaml(yaml_list):
+    """    """
+    import yaml
+    yaml_dict = dict()
+    for yaml_item in reversed(yaml_list):
+        yaml_dict.update(yaml.load(yaml_item))
+    return yaml_dict
+
+def next_md_path(current_path):
+    """    """
+    from os.path import splitext
+    current_path = splitext(current_path)[0]
+    next_ext = splitext(current_path)[1]
+    if next_ext.lower() == '' or next_ext.lower() == '.md':
+        next_path = '{}.md'.format(splitext(current_path)[0])
+    else:
+        next_path = splitext(current_path)
+    return next_path
+
+def generate_dir_path(path, suffix):
+    """    """
+    import os
+    id_ = path.split('.')[0]
+    dir_path = "{}-{}".format(id_, suffix)
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+    return dir_path
+
+def call_pweave(
+        input_file,
+        output_file,
+        figure_path="images",
+        cache_path="cache",
+        cache=False,
+        plot=True,
+        figformat=None,
+        doctype='pandoc'
+    ):
+    """    """
+    from pweave import Pweb
+    from pweave.config import rcParams
+
+    doc = Pweb(file=input_file, format=doctype)
+    rcParams["usematplotlib"] = plot
+
+    rcParams["figdir"] = figure_path
+    rcParams["cachedir"] = cache_path
+    doc.storeresults = cache
+    doc.sink = output_file
+    if figformat is not None:
+        doc.updateformat({'figfmt' : figformat, 'savedformats' : [figformat]})
+
+    doc.parse()
+    doc.run()
+    doc.format()
+    doc.sink = output_file
+    doc.write()
+    return
+
+def call_knitr(
+        input_file,
+        output_file,
+        rscript="Rscript",
+        figure_path="images",
+        cache_path="cache"
+    ):
+    """    """
+    import subprocess
+
+    r_command = ";".join([
+        "library(knitr)",
+        "opts_chunk$set(fig.path = {f}, cache.path = {c})".format(
+            f=figure_path,
+            c=cache_path
+        ),
+        "knit('{input_}', output = '{output}')".format(
+            input_=input_file,
+            output=output_file
+        )
+    ])
+
+    command = ' '.join([
+        rscript,
+        '-e',
+        '"{}"'.format(r_command)
+    ])
+
+    subps = subprocess.Popen(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    return subps.communicate()
 
 @app.route('/')
 def index():

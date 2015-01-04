@@ -208,5 +208,22 @@ body, html {
   color:rgba(255,255,255,0.6)
 }
 #blog-side-nav {
-  padding-top:1em;
+  margin-top:1em;
+}
+#licensebutton_slim {
+  margin-left:1em;
+  margin-right:1em;
+}
+/* Thanks to http://kimberlygeswein.com for this font */
+@font-face {
+  font-family:SetFireToTheRain;
+  src: url(../fonts/SetFireToTheRain.ttf)
+}
+#navbar-brand {
+  font-family:SetFireToTheRain;
+  font-size:2.5em;
+}
+.nav-item {
+  font-family:SetFireToTheRain;
+  font-size:1.5em;
 }
