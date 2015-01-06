@@ -26,6 +26,12 @@ __license__ = """
 """
 
 from app import app
+from app import posts
+from app.app import base_path
+from app.app import content_path
+from app.app import posts_html
+from app.app import posts_processed
+from app.app import posts_raw
 
 if __name__ == '__main__':
     app.app.run(debug=True)

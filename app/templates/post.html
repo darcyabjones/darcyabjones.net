@@ -5,27 +5,39 @@
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
       <!-- the actual blog post: title/author/date/content -->
-      <h1>Blog Post Template for Bootstrap</h1>
-      <p>
-        <div class="header-icons" style="margin-left:0px;">
-          <i class="fa fa-user"></i>
-          Super User
-        </div>
-        <div class="header-icons">
-          <i class="fa fa-calendar"></i>
-          August 24, 2014
-        </div>
-        <div class="header-icons">
-          <i class="fa fa-clock-o"></i>
-          9:00
-        </div>
-        <div class="clear"></div>
-        <i class="fa fa-tags"></i>
-        <a href="">
-          <span class="badge badge-info">Bootstrap</span>
-        </a>
-      </p>
-      <p>Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor.</p>
+      <h2>{{post.title}}</h1>
+        <p>
+          {% if post.user %}
+          <div class="header-icons">
+            <i class="fa fa-user"></i>
+            {{post.user}}
+          </div>
+          {% endif %}
+          {% if post.date_str %}
+          <div class="header-icons">
+            <i class="fa fa-calendar"></i>
+            {{post.date_str}}
+          </div>
+          {% endif %}
+          {% if post.time_str %}
+          <div class="header-icons">
+            <i class="fa fa-clock-o"></i>
+            {{post.time_str}}
+          </div>
+          {% endif %}
+          <div class="clear"></div>
+          {% if post.tags %}
+          <i class="fa fa-tags"></i>
+          {% for tag in post.tags %}
+          <a href="">
+            <span class="badge badge-info">
+              {{tag}}
+            </span>
+          </a>
+          {% endfor %}
+          {% endif %}
+        </p>
+      {{post.content|safe}}
       <hr>
       <div class="share-buttons">
         <h4>Share this post:</h4>

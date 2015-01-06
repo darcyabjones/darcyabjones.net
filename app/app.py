@@ -29,13 +29,14 @@ __license__ = """
 ################################ Import Modules ################################
 
 import app
+from app import posts
 from flask import Flask
 from flask import url_for
 from flask import redirect
 from flask import render_template
+
 import json
 import os
-import pypandoc
 
 base_path = os.path.dirname(app.__file__)
 content_path = os.path.join(base_path, 'content')
@@ -90,202 +91,86 @@ def nav(current):
     ]
     return nav_list
 
-def process_raw_posts(path, completed_path, html_path):
+def get_posts(path, which=None):
     """    """
-    from os import listdir
-    from os import remove
-    from os.path import isfile
+
+    from os.path import splitext
     from os.path import join
-    from os.path import splitext
-    from os.path import split
-    from shutil import copy2
-    from shutil import move
-    import pypandoc
+    from os.path import isfile
+    from os import listdir
+    from collections import defaultdict
     import json
-
-    knitr_extensions = {".rmd", ".rnw"}
-    pweave_extensions = {".pmd", ".pnw"}
-    pandoc_extensions = {".md",}
-    extensions = knitr_extensions + pweave_extensions + pandoc_extensions
-
-    raw_files__ = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
-    raw_files_ = [f for f in raw_files__ if splitext(f)[1] in extensions]
-    raw_files = [join(path, f) for f in raw_files_ ]
-
-    for raw_file, completed_file in zip(raw_files, raw_files_):
-        copy2(src=raw_file, dst=join(completed_path, completed_file))
-
-    while len(raw_files) > 0:
-        current_file = raw_files.pop(0)
-        current_ext = splitext(current_file)[1]
-        next_file = next_md_path(current_file)
-        if current_ext.lower() in knitr_extensions:
-            output = call_knitr(
-                input_file=current_file,
-                output_file=next_file,
-                figure_path=generate_dir_path(current_file, 'figures'),
-                cache_path=generate_dir_path(current_file, 'cache')
-            )
-            raw_files.append(next_file)
-            remove(current_file)
-        elif current_ext.lower() in pweave_extensions:
-            output = call_pweave(
-                input_file=current_file,
-                output_file=next_file,
-                figure_path=generate_dir_path(current_file, 'figures'),
-                cache_path=generate_dir_path(current_file, 'cache')
-            )
-            raw_files.append(next_file)
-            remove(current_file)
-        elif current_ext.lower() in pandoc_extensions:
-            yaml, markdown = process_md(current_file)
-            output = pypandoc.convert(
-                source=markdown,
-                to='html5',
-                format='markdown',
-                extra_args=[]
-            )
-            new_html_path = join(
-                html_path,
-                splitext(split(current_file)[1])[0]
-            )
-            html_file = new_html_path + ".html"
-            with open(html_file, 'w') as html_handle:
-                html_handle.write(output)
-            json_file = new_html_path + ".json"
-            with open(json_file, 'w') as json_handle:
-                json.dump(yaml, json_handle)
-            move(
-                src=generate_dir_path(current_file, 'figures'),
-                dst=next_path + "-figures"
-            )
-            move(
-                src=generate_dir_path(current_file, 'cache'),
-                dst=next_path + "-cache"
-            )
-    return
-
-def process_md(md_path):
-    """    """
-    import re
-    # Boundary is three or more '.' or '-'.
-    yaml_boundary = re.compile("(-{3,}|\.{3,})")
-    blankline = True
-    yaml_block = False
-    markdown = list()
-    yaml = list()
-    current_yaml = list()
-    with open(md_path, 'rU') as md_handle:
-        for line in md_handle:
-            if yaml_boundary.match(line.strip()) != None:
-                if yaml_block:
-                    yaml_block = False
-                    yaml.append("\n".join(current_yaml))
-                    current_yaml = list()
-                else:
-                    yaml_block = True
-            elif line.strip == '':
-                blankline = True
-            elif yaml_block:
-                current_yaml.append(line)
-            else:
-                markdown.append(line)
-    return "\n".join(markdown), process_yaml(yaml)
-
-def process_yaml(yaml_list):
-    """    """
     import yaml
-    yaml_dict = dict()
-    for yaml_item in reversed(yaml_list):
-        yaml_dict.update(yaml.load(yaml_item))
-    return yaml_dict
+    from sys import stderr
+    from datetime import datetime
 
-def next_md_path(current_path):
-    """    """
-    from os.path import splitext
-    current_path = splitext(current_path)[0]
-    next_ext = splitext(current_path)[1]
-    if next_ext.lower() == '' or next_ext.lower() == '.md':
-        next_path = '{}.md'.format(splitext(current_path)[0])
+    def required(dict_):
+        if 'html' in dict_ \
+            and ('json' in dict_ \
+            or 'yaml' in dict_ \
+            or 'yml' in dict_):
+            return True
+        else:
+            stderr.write(
+                "{} Did not have all required files".format(dict_)
+            )
+            return False
+
+    raw_files = [f for f in listdir(path) if isfile(join(path, f))]
+    print(raw_files)
+    output = defaultdict(dict)
+    for file_ in raw_files:
+        name = file_.split('.')[0]
+        type_ = splitext(file_)[1].strip('.')
+        file_path = join(path, file_)
+        output[name][type_] = file_path
+
+    if isinstance(which, str):
+        output = dict([(k, v) for k, v in output.items() if k == which and required(v)])
+    elif isinstance(which, list) or isinstance(which, set) \
+            or isinstance(which, tuple):
+        output = dict([(k, v) for k, v in output.items() if k in which and required(v)])
     else:
-        next_path = splitext(current_path)
-    return next_path
+        output = dict([(k, v) for k, v in output.items() if required(v)])
 
-def generate_dir_path(path, suffix):
-    """    """
-    import os
-    id_ = path.split('.')[0]
-    dir_path = "{}-{}".format(id_, suffix)
-    if not os.path.isdir(dir_path):
-        os.makedirs(dir_path)
-    return dir_path
+    for key, value in output.items():
+        value['id_'] = key
+        if 'json' in value:
+            with open(value['json'], "rU") as json_handle:
+                value.update(json.load(json_handle, object_hook=json_date_parser))
+        elif 'yaml' in value:
+            with open(value['yaml'], 'rU') as yaml_handle:
+                value.update(yaml.load(yaml_handle))
+        elif 'yml' in value:
+            with open(value['yml'], 'rU') as yaml_handle:
+                value.update(yaml.load(yaml_handle))
+        if 'date' in value:
+            if isinstance(value['date'], datetime):
+                value['date_str'] = value['date'].strftime("%d %B %Y")
+                time_str = value['date'].strftime("%H:%M")
+                print(type(time_str))
+                if time_str != "00:00":
+                    value['time_str'] = time_str
+    output = sorted(output.values(), key=lambda d: d['date'])
+    return output # list of dictionaries
 
-def call_pweave(
-        input_file,
-        output_file,
-        figure_path="images",
-        cache_path="cache",
-        cache=False,
-        plot=True,
-        figformat=None,
-        doctype='pandoc'
-    ):
-    """    """
-    from pweave import Pweb
-    from pweave.config import rcParams
-
-    doc = Pweb(file=input_file, format=doctype)
-    rcParams["usematplotlib"] = plot
-
-    rcParams["figdir"] = figure_path
-    rcParams["cachedir"] = cache_path
-    doc.storeresults = cache
-    doc.sink = output_file
-    if figformat is not None:
-        doc.updateformat({'figfmt' : figformat, 'savedformats' : [figformat]})
-
-    doc.parse()
-    doc.run()
-    doc.format()
-    doc.sink = output_file
-    doc.write()
-    return
-
-def call_knitr(
-        input_file,
-        output_file,
-        rscript="Rscript",
-        figure_path="images",
-        cache_path="cache"
-    ):
-    """    """
-    import subprocess
-
-    r_command = ";".join([
-        "library(knitr)",
-        "opts_chunk$set(fig.path = {f}, cache.path = {c})".format(
-            f=figure_path,
-            c=cache_path
-        ),
-        "knit('{input_}', output = '{output}')".format(
-            input_=input_file,
-            output=output_file
-        )
-    ])
-
-    command = ' '.join([
-        rscript,
-        '-e',
-        '"{}"'.format(r_command)
-    ])
-
-    subps = subprocess.Popen(
-        command,
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    return subps.communicate()
+def json_date_parser(dct):
+    from datetime import datetime
+    date = "%Y-%m-%d"
+    date_time = "%Y-%m-%dT%H:%M:%S"
+    date_time2 = "%Y-%m-%dT%H:%M"
+    date_time3 = "%Y-%m-%d %H:%M"
+    date_time_offset = "%Y-%m-%dT%H:%M:%S%z"
+    time = "%H:%M:%S"
+    formats = [date, date_time, date_time2, date_time3, date_time_offset, time]
+    for k, v in dct.items():
+        if isinstance(v, str):
+            for fmt in formats:
+                try:
+                    dct[k] = datetime.strptime(v, fmt)
+                except ValueError:
+                    pass
+    return dct
 
 @app.route('/')
 def index():
@@ -295,7 +180,12 @@ def index():
 @app.route('/blog/')
 def blog():
     content = update(path=os.path.join(content_path, "blog.json"))
-    return render_template('blog.html', nav=nav("Blog"), page=content)
+    posts = get_posts(posts_html)
+    print(posts)
+    for post in posts:
+        with open(post['html'], 'rU') as html_handle:
+            post['content'] = html_handle.read()
+    return render_template('blog.html', nav=nav("Blog"), page=content, posts=posts)
 
 @app.route('/archive/')
 def archive_redirect():
@@ -306,10 +196,13 @@ def archive():
     content = update(path=os.path.join(content_path, "archive.json"))
     return render_template('archive.html', nav=nav("Archive"), page=content)
 
-@app.route('/posts/<int:post_id>')
+@app.route('/posts/<post_id>')
 def show_post(post_id):
     content = update(path=os.path.join(content_path, "archive.json"))
-    return render_template('post.html', nav=nav("Post"), page=content)
+    post = get_posts(posts_html, post_id)[0]
+    with open(post['html'], 'rU') as html_handle:
+        post['content'] = html_handle.read()
+    return render_template('post.html', nav=nav("Post"), page=content, post=post)
 
 @app.route('/projects/')
 def projects():
