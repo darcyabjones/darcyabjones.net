@@ -28,7 +28,155 @@ __license__ = """
 
 ################################ Import Modules ################################
 
+from os.path import splitext
+from os.path import join
+from os.path import isfile
+from os import listdir
+from collections import defaultdict
+import json
+import yaml
+from datetime import datetime
+
+
 ################################################################################
+
+def get_posts(path, which=None, verbose=True):
+    """ Prepares a list of posts taken from a directory.
+
+    Keyword arguments:
+    path -- Path to the directory containing blog posts (type str).
+    which -- Specifies which posts to include in the output. 'None' includes all
+        posts, a string will return only the post with an id that matches the
+        string, and a list (or tuple, or set) of strings will include all posts
+        with id's in the list (type:None|str|list, default None).
+    verbose -- Print information as the function runs (type bool, default True).
+
+    Returns:
+    A list of dict objects (type list).
+    """
+
+
+    """ Here we conditionally define include_test depending on what type of
+    object 'which' is."""
+
+    class_ = type(which)
+    if class_ == str:
+        def include_test(name):
+            if name == which:
+                return True
+            else:
+                return False
+    elif class_ in {list, tuple, set}:
+        def include_test(name):
+            if name in which:
+                return True
+            else:
+                return False
+    else:
+        def include_test(name):
+            return True
+
+    """ Loop through all files in the posts directory and add each file format
+    e.g. 'json', 'html', etc as keys for a subdictionary. The base dictionary
+    is keyed by the file name (excluding the extension).
+
+    example:
+    >>> output = {
+    ...    'myfile':{
+    ...        'html':'/path/to/posts/myfile.html',
+    ...        'json':'/path/to/posts/myfile.json'
+    ...    }
+    ...}
+    """
+    all_files = defaultdict(dict)
+    for file_ in listdir(path):
+        if isfile(join(path, file_)):
+            name = file_.split('.')[0]
+            type_ = splitext(file_)[1].strip('.')
+            file_path = join(path, file_)
+            all_files[name][type_] = file_path
+
+    posts = list()
+    required_keys = {'html', 'title', 'date'}
+    for key, value in all_files.items():
+        """ If include_test says that we don't need this file, we skip the rest
+        of the current iteration and continue with the next key, value pair. """
+        if not include_test(key):
+            continue
+        value['id_'] = key
+        if 'json' in value:
+            with open(value['json'], "rU") as json_handle:
+                value.update(json.load(json_handle, object_hook=json_date_parser))
+        elif 'yaml' in value:
+            with open(value['yaml'], 'rU') as yaml_handle:
+                value.update(yaml.load(yaml_handle))
+        elif 'yml' in value:
+            with open(value['yml'], 'rU') as yaml_handle:
+                value.update(yaml.load(yaml_handle))
+
+        """ If some required keys are missing then we skip the rest of the
+        current iteration and continue with the next key, value pair.
+        If verbose is True we print which keys were missing."""
+        if required_keys.intersection(value) != required_keys:
+            if verbose:
+                d = required_keys.difference(required_keys.intersection(value))
+                print(
+                    "Excluded '{}' from posts because it did not ".format(key) +
+                    "have all of the required information. The field(s) " +
+                    "'{}' was/were missing.".format("', '".join(list(d)))
+                )
+            continue
+
+        """ Convert 'datetime' objects into more human friendly strings. """
+        if isinstance(value['date'], datetime):
+            # 'date_str' will look like '06 January 2015'.
+            value['date_str'] = value['date'].strftime("%d %B %Y")
+            # 'time_str' will look like '23:29'.
+            time_str = value['date'].strftime("%H:%M")
+            if time_str != "00:00":
+                value['time_str'] = time_str
+        else:
+            value['date_str'] = value['date']
+
+        """ Everything is cool, add the post to the list."""
+        posts.append(value)
+
+    """ We could run into problems here when dates aren't parsed as datetime
+    objects. I might need to figure out a better way of ordering posts by date
+    in the future."""
+    posts.sort(key=lambda d: d['date'])
+    return posts
+
+def json_date_parser(dct):
+    """ A dirty workaround for parsing dates from JSON files.
+
+    Loops (non-recursively) through the dictionary from the parsed JSON file.
+    If the value is a string we try to convert the string using several
+    'datetime.strptime()' patterns. If the pattern matches the string, the
+    string is replaced with the corresponding datetime object. If the pattern
+    doesn't match the string we handle the exception, no biggie.
+
+    Keyword arguments:
+    dct -- A dictionary from the parsed JSON (type dict).
+
+    Returns:
+    A dictionary with string dates replaced with datetime objects (type dict).
+    """
+    date = "%Y-%m-%d"
+    date_time = "%Y-%m-%dT%H:%M:%S"
+    date_time2 = "%Y-%m-%dT%H:%M"
+    date_time3 = "%Y-%m-%d %H:%M"
+    date_time_offset = "%Y-%m-%dT%H:%M:%S%z"
+    time = "%H:%M:%S"
+    formats = [date, date_time, date_time2, date_time3, date_time_offset, time]
+    for k, v in dct.items():
+        if isinstance(v, str):
+            for fmt in formats:
+                try:
+                    dct[k] = datetime.strptime(v, fmt)
+                except ValueError:
+                    pass
+    return dct
 
 def process_raw_posts(path, completed_path, html_path, verbose=True):
     """    """

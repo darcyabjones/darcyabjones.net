@@ -29,12 +29,11 @@ __license__ = """
 ################################ Import Modules ################################
 
 import app
-from app import posts
+from app.posts import get_posts
 from flask import Flask
 from flask import url_for
 from flask import redirect
 from flask import render_template
-
 import json
 import os
 
@@ -52,8 +51,14 @@ posts_raw = os.path.join(content_path, 'posts_raw')
 app = Flask(__name__)
 
 def update(path):
-    """    """
-    import json
+    """ Loads JSON content for the page.
+
+    Keyword arguments:
+    path -- The path to the JSON file (type int).
+
+    Returns:
+    A dictionary containing the JSON information (type dict).
+    """
     try:
         json_handle = open(path, 'r')
         json_content = json.load(json_handle)
@@ -65,8 +70,19 @@ def update(path):
     return json_content
 
 def nav(current):
-    """    """
-    from flask import url_for
+    """ Creates a dictionary to construct the current navigation bar from.
+
+    This function is pretty straight-forward. To have the navigation button for
+    the currently active page highlighted we convert 'current' to a boolean
+    value so that we can conditionally add an extra class to the Jinja2 template.
+
+    Keyword arguments:
+    current -- The page that is currently active (type str).
+
+    Returns:
+    A dictionary containing link names, link hrefs and whether the page is
+        currently active (type dict).
+    """
     nav_list = [
         {
             "name":"Home",
@@ -91,87 +107,6 @@ def nav(current):
     ]
     return nav_list
 
-def get_posts(path, which=None):
-    """    """
-
-    from os.path import splitext
-    from os.path import join
-    from os.path import isfile
-    from os import listdir
-    from collections import defaultdict
-    import json
-    import yaml
-    from sys import stderr
-    from datetime import datetime
-
-    def required(dict_):
-        if 'html' in dict_ \
-            and ('json' in dict_ \
-            or 'yaml' in dict_ \
-            or 'yml' in dict_):
-            return True
-        else:
-            stderr.write(
-                "{} Did not have all required files".format(dict_)
-            )
-            return False
-
-    raw_files = [f for f in listdir(path) if isfile(join(path, f))]
-    print(raw_files)
-    output = defaultdict(dict)
-    for file_ in raw_files:
-        name = file_.split('.')[0]
-        type_ = splitext(file_)[1].strip('.')
-        file_path = join(path, file_)
-        output[name][type_] = file_path
-
-    if isinstance(which, str):
-        output = dict([(k, v) for k, v in output.items() if k == which and required(v)])
-    elif isinstance(which, list) or isinstance(which, set) \
-            or isinstance(which, tuple):
-        output = dict([(k, v) for k, v in output.items() if k in which and required(v)])
-    else:
-        output = dict([(k, v) for k, v in output.items() if required(v)])
-
-    for key, value in output.items():
-        value['id_'] = key
-        if 'json' in value:
-            with open(value['json'], "rU") as json_handle:
-                value.update(json.load(json_handle, object_hook=json_date_parser))
-        elif 'yaml' in value:
-            with open(value['yaml'], 'rU') as yaml_handle:
-                value.update(yaml.load(yaml_handle))
-        elif 'yml' in value:
-            with open(value['yml'], 'rU') as yaml_handle:
-                value.update(yaml.load(yaml_handle))
-        if 'date' in value:
-            if isinstance(value['date'], datetime):
-                value['date_str'] = value['date'].strftime("%d %B %Y")
-                time_str = value['date'].strftime("%H:%M")
-                print(type(time_str))
-                if time_str != "00:00":
-                    value['time_str'] = time_str
-    output = sorted(output.values(), key=lambda d: d['date'])
-    return output # list of dictionaries
-
-def json_date_parser(dct):
-    from datetime import datetime
-    date = "%Y-%m-%d"
-    date_time = "%Y-%m-%dT%H:%M:%S"
-    date_time2 = "%Y-%m-%dT%H:%M"
-    date_time3 = "%Y-%m-%d %H:%M"
-    date_time_offset = "%Y-%m-%dT%H:%M:%S%z"
-    time = "%H:%M:%S"
-    formats = [date, date_time, date_time2, date_time3, date_time_offset, time]
-    for k, v in dct.items():
-        if isinstance(v, str):
-            for fmt in formats:
-                try:
-                    dct[k] = datetime.strptime(v, fmt)
-                except ValueError:
-                    pass
-    return dct
-
 @app.route('/')
 def index():
     content = update(path=os.path.join(content_path, "index.json"))
@@ -181,7 +116,6 @@ def index():
 def blog():
     content = update(path=os.path.join(content_path, "blog.json"))
     posts = get_posts(posts_html)
-    print(posts)
     for post in posts:
         with open(post['html'], 'rU') as html_handle:
             post['content'] = html_handle.read()
