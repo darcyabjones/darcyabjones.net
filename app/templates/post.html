@@ -13,16 +13,14 @@
             {{post.user}}
           </div>
           {% endif %}
-          {% if post.date_str %}
+          {% if post.date %}
           <div class="header-icons">
             <i class="fa fa-calendar"></i>
-            {{post.date_str}}
+            {{post.date|date}}
           </div>
-          {% endif %}
-          {% if post.time_str %}
           <div class="header-icons">
             <i class="fa fa-clock-o"></i>
-            {{post.time_str}}
+            {{post.date|time}}
           </div>
           {% endif %}
           <div class="clear"></div>

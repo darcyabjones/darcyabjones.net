@@ -14,16 +14,14 @@
               {{post.user}}
             </div>
           {% endif %}
-          {% if post.date_str %}
+          {% if post.date %}
             <div class="header-icons">
               <i class="fa fa-calendar"></i>
-              {{post.date_str}}
+              {{post.date|date}}
             </div>
-          {% endif %}
-          {% if post.time_str %}
             <div class="header-icons">
               <i class="fa fa-clock-o"></i>
-              {{post.time_str}}
+              {{post.date|time}}
             </div>
           {% endif %}
           <div class="clear"></div>
@@ -45,7 +43,7 @@
         <div class="clear"></div>
       {% endfor %}
     </div>
-    <div class="col-md-3 col-lg-3 col-sm-3" id="blog-side-nav">
+    <div class="col-sm-3 col-md-3 col-lg-3" id="side-nav">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title"><i class="fa fa-tags"></i> Tags </h4>

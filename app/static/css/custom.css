@@ -191,6 +191,7 @@ body, html {
   margin-top:2em;
   font-size:1.1em;
   color:#FFFFFF;
+  text-align:center;
 }
 #home-portrait {
   margin-top:3em;
@@ -207,7 +208,7 @@ body, html {
   text-decoration:none;
   color:rgba(255,255,255,0.6)
 }
-#blog-side-nav {
+#side-nav {
   margin-top:1em;
 }
 #licensebutton_slim {
@@ -226,6 +227,13 @@ body, html {
 .nav-item {
   font-family:SetFireToTheRain;
   font-size:1.5em;
+}
+
+.course {
+    margin-top:1em;
+}
+.about-course-notes {
+    margin-top:0.5em;
 }
 
 /* Loosely based on pygment's tango colors */

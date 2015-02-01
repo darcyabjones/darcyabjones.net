@@ -1,3 +1,9 @@
 {
-  "title":"Home"
+  "title":"Home",
+  "blurb":[
+      "My name is Darcy.",
+      "I am an honours student at La Trobe University, Australia.",
+      "I dig biology, (bio)informatics, programming, fungi, plants, and reproducibility.",
+      "These are the stories of my blunderings through research."
+  ]
 }
