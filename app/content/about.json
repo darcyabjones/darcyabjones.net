@@ -33,7 +33,7 @@
               {"code":"STA3SI","year":2014,"title":"Statistical inference","mark":50},
               {"code":"BCH3ATB","year":2014,"title":"Advanced topics in biochemistry and cell biology","mark":83},
               {"code":"MED3LAB","year":2014,"title":"Advanced biochemistry and medical biology laboratory course","mark":96},
-              {"code":"BOT3PB","year":2014,"title":"Plant Biotechnology","mark":85},
+              {"code":"BOT3PB","year":2014,"title":"Plant biotechnology","mark":85},
               {"code":"BCH2IBM","year":2013,"title":"Introduction to biochemistry and molecular biology","mark":86},
               {"code":"BIO2POS","year":2013,"title":"Practice of science","mark":89},
               {"code":"BOT2ILP","year":2013,"title":"Inner life of plants","mark":92},
@@ -56,7 +56,7 @@
           "institution":"The University of Melbourne",
           "institution_url":"http://www.unimelb.edu.au/",
           "title":"Associate degree in Environmental Horticulture",
-          "code":"46131",
+          "code":"881AA",
           "level":"Undergraduate",
           "start":"2010-02-22",
           "end":"2012-07-05",
@@ -83,14 +83,15 @@
           "institution":"Leongatha Secondary College",
           "institution_url":"http://www.leonsec.vic.edu.au/",
           "title":"Victorian certificate of education",
+          "code":"VCE",
           "start":"2005-01-25",
           "end":"2006-12-12",
           "grades":[
-              {"year":2006,"title":"Art (Photography)","grade":72},
-              {"year":2006,"title":"English","grade":64},
-              {"year":2006,"title":"Media","grade":40},
-              {"year":2006,"title":"Music performance","grade":64},
-              {"year":2006,"title":"Visual communication and design","grade":41}
+              {"year":2006,"title":"Art (Photography)","mark":72},
+              {"year":2006,"title":"English","mark":64},
+              {"year":2006,"title":"Media","mark":40},
+              {"year":2006,"title":"Music performance","mark":64},
+              {"year":2006,"title":"Visual communication and design","mark":82}
           ]
       }
   ],
@@ -99,9 +100,10 @@
           "employer":"Town and Country Gardens Nursery",
           "position":"Nursery assistant",
           "locations":[
-              {"country":"Australia","city":"Malvern","postcode":3144,"street":"1280 Malvern Road"},
-              {"country":"Australia","city":"Balwyn","postcode":3103,"street":"24 Whitehorse Road"}
+              {"country":"Australia","city":"Malvern","postcode":3144,"state":"Victoria","street":"1280 Malvern Road"},
+              {"country":"Australia","city":"Balwyn","postcode":3103,"state":"Victoria","street":"24 Whitehorse Road"}
           ],
+          "code":"00006",
           "abn":"77 800 702 203",
           "start":"2010-09-01",
           "end":"2014-01-26"
@@ -110,8 +112,9 @@
           "employer":"Shone's Nursery",
           "position":"Nursery Assistant",
           "locations":[
-              {"country":"Australia","city":"Pearcedale","postcode":3912,"street":"565 Baxter-Tooradin Road"}
+              {"country":"Australia","city":"Pearcedale","postcode":3912,"state":"Victoria","street":"565 Baxter-Tooradin Road"}
           ],
+          "code":"00005",
           "abn":"55 879 268 551",
           "start":"2010-01-04",
           "end":"2010-09-17"
@@ -120,8 +123,9 @@
           "employer":"Lotus Hospitality",
           "position":"Barista",
           "locations":[
-              {"country":"Australia","city":"Prahran","postcode":3181,"street":"51 St John Street"}
+              {"country":"Australia","city":"Prahran","postcode":3181,"state":"Victoria","street":"51 St John Street"}
           ],
+          "code":"00004",
           "abn":"19 375 640 375",
           "start":"2009-10-19",
           "end":"2009-12-31"
@@ -130,18 +134,20 @@
           "employer":"Coffee HQ",
           "position":"Barista",
           "locations":[
-              {"country":"Australia","city":"Prahran","postcode":3181,"street":"51 St John Street"}
+              {"country":"Australia","city":"Prahran","postcode":3181,"state":"Victoria","street":"51 St John Street"}
           ],
+          "code":"00003",
           "abn":"33 089 728 576",
           "start":"2008-08-11",
           "end":"2009-10-18"
       },
       {
           "employer":"Salmat-Salesforce",
-          "position":"Customer service - Inbound Call Centre",
+          "position":"Customer service (Inbound Call Centre)",
           "locations":[
-              {"country":"Australia","city":"Melbourne CBD","postcode":3000}
+              {"country":"Australia","city":"Melbourne CBD","state":"Victoria","postcode":3000}
           ],
+          "code":"00002",
           "start":"2007-10-22",
           "end":"2008-05-23",
           "abn":"30 006 688 955"
@@ -150,8 +156,9 @@
           "employer":"Subway",
           "position":"Sandwich hand",
           "locations":[
-              {"country":"Australia","city":"Melbourne CBD","postcode":3000,"street":"255 Bourke street"}
+              {"country":"Australia","city":"Melbourne CBD","postcode":3000,"state":"Victoria","street":"255 Bourke street"}
           ],
+          "code":"00001",
           "abn":"98 483 100 962",
           "start":"2007-02-20",
           "end":"2007-10-23"
@@ -162,8 +169,9 @@
           "title":"Australian Pathogen Bioinformatics Symposium",
           "role":"Attendee",
           "start":"2014-12-04",
+          "code":"00004",
           "locations":[
-              {"country":"Australia","city":"Acton","postcode":2601,"street":"JG Crawford Building, The Australian National University"}
+              {"country":"Australia","city":"Acton","postcode":2601,"state":"Canberra","building":"JG Crawford Building","institution":"The Australian National University"}
           ]
       },
       {
@@ -171,8 +179,9 @@
           "role":"Attendee",
           "start":"2014-12-02",
           "end":"2014-12-03",
+          "code":"00003",
           "locations":[
-              {"country":"Australia","city":"Stromlo","postcode":2611,"street":"Mount Stromlo Observatory, The Australian National University"}
+              {"country":"Australia","city":"Stromlo","postcode":2611,"state":"Canberra","building":"Mount Stromlo Observatory","institution":"The Australian National University"}
           ]
       },
       {
@@ -180,8 +189,9 @@
           "role":"Attendee",
           "start":"2014-07-21",
           "end":"2014-07-22",
+          "code":"00002",
           "locations":[
-              {"country":"Australia","city":"Camperdown","postcode":2006,"street":"Charles Perkins Centre, University of Sydney"}
+              {"country":"Australia","city":"Camperdown","postcode":2006,"state":"New South Wales","building":"Charles Perkins Centre","institution":"University of Sydney"}
           ]
       },
       {
@@ -189,8 +199,9 @@
           "role":"Attendee",
           "start":"2014-07-07",
           "end":"2014-07-11",
+          "code":"00001",
           "locations":[
-              {"country":"Australia","city":"St Lucia","postcode":4067,"street":"Institute for Molecular Biosciences, The University of Queensland"}
+              {"country":"Australia","city":"St Lucia","postcode":4067,"state":"Queensland","building":"Institute for Molecular Biosciences","institution":"The University of Queensland"}
           ]
       }
   ]

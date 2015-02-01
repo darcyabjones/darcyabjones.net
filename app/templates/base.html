@@ -34,7 +34,7 @@
 
 <body>
   {% block navbar %}
-  <div class="navbar navbar-default navbar-fixed-top" name='navbar'>
+  <header class="navbar navbar-default navbar-fixed-top" name='navbar'>
     <div class="container">
       <div class="navbar-header">
         <a id="navbar-brand" class="navbar-brand" href="/">DARCY AB JONES</a>
@@ -52,27 +52,27 @@
         -->
         <ul class="nav navbar-nav navbar-right">
           {% for item in nav %}
-          {% if item.dropdown %}
-          <li class="{% if item.current %}active{% endif %} dropdown">
-            <a class="dropdown-toggle nav-item" data-toggle="dropdown" href="{{item.path}}">{{item.name}} <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              {% for subitem in item.subnav %}
-              <li>
-                <a href="{{subitem.path}}" class="nav-item">{{subitem.name}}</a>
-              </li>
-              {% endfor %}
-            </ul
-          </li>
-          {% else %}
-          <li class="{% if item.current %}active {% endif %}">
-            <a href="{{item.path}}" class="nav-item">{{item.name}}</a>
-          </li>
-          {% endif %}
+            {% if item.dropdown %}
+            <li class="{% if item.current %}active{% endif %} dropdown">
+              <a class="dropdown-toggle nav-item" data-toggle="dropdown" href="{{item.path}}">{{item.name}} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                {% for subitem in item.subnav %}
+                <li>
+                  <a href="{{subitem.path}}" class="nav-item">{{subitem.name}}</a>
+                </li>
+                {% endfor %}
+              </ul
+            </li>
+            {% else %}
+            <li class="{% if item.current %}active {% endif %}">
+              <a href="{{item.path}}" class="nav-item">{{item.name}}</a>
+            </li>
+            {% endif %}
           {% endfor %}
         </ul>
       </div>
-  </div> <!-- end container -->
-  </div> <!-- end navbar -->
+    </div> <!-- end container -->
+  </header> <!-- end navbar -->
   {% endblock navbar %}
 
   {% block header %}
@@ -134,6 +134,15 @@
   <!-- Scrolling Nav JavaScript -->
   <!-- script src="/static/js/jquery.easing.min.js"></script>
   <script src="/static/js/scrolling-nav.js"></script -->
+  <script src="/static/js/headroom.min.js"></script>
+  <script type="text/javascript">
+      // grab an element
+      var myElement = document.querySelector("header");
+      // construct an instance of Headroom, passing the element
+      var headroom  = new Headroom(myElement);
+      // initial
+      headroom.init();
+  </script>
   {% endblock javascript %}
 
 </body>
