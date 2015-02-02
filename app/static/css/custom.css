@@ -41,6 +41,10 @@ body, html {
 body {
     padding-top: 50px;
 }
+section, article {
+    padding-top:2.5em;
+    margin-top:-2.5em;
+}
 .headroom {
     transition: transform 200ms linear;
 }
@@ -231,9 +235,6 @@ body {
   font-family:SetFireToTheRain;
   font-size:1.5em;
 }
-.course {
-    margin-top:1em;
-}
 .about-course-notes {
     margin-top:0.5em;
 }
@@ -262,7 +263,66 @@ button.more-btn.collapsed:after {
 .item {
     margin-bottom:1.5em;
 }
-
+/* sidebar */
+#side-nav {
+    padding-left: 2em;
+    margin-bottom: 1.5em;
+}
+#side-nav > ul {
+    overflow-y: auto;
+    height: 100%;
+}
+/* all links */
+#side-nav .nav>li>a {
+    color: #999;
+    padding: 0;
+    font-size: 1em;
+    font-weight: 400;
+    padding-left: 0.5em;
+    border-left: 2px solid transparent;
+}
+/* active & hover links */
+#side-nav .nav>.active>a,
+#side-nav .nav>li>a:hover,
+#side-nav .nav>li>a:focus {
+    color: #973253;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 2px solid #973253;
+}
+/* nested links */
+#side-nav .nav .nav>li>a {
+    padding-left: 1.5em;
+    font-size:0.9em;
+}
+/* all active links */
+#side-nav .nav>.active>a,
+#side-nav .nav>.active:hover>a,
+#side-nav .nav>.active:focus>a {
+    font-weight: 700;
+}
+/* nested active links */
+#side-nav .nav .nav>.active>a,
+#side-nav .nav .nav>.active:hover>a,
+#side-nav .nav .nav>.active:focus>a {
+    font-weight: 500;
+}
+/* hide all (inactive) nested list */
+#side-nav .nav ul.nav {
+    display: none;
+}
+/* show active nested list */
+#side-nav .nav>.active>ul.nav {
+    display: block;
+}
+#side-nav.affix {
+    top: 2em;
+}
+@media screen and (max-width: 768px){
+    #side-nav {
+        display:none
+    }
+}
 /* Loosely based on pygment's tango colors */
 table.sourceCode, tr.sourceCode, td.sourceCode, table.sourceCode pre
 { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; background-color: #f8f8f8 }
