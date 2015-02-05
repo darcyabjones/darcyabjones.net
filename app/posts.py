@@ -40,8 +40,9 @@ from datetime import datetime
 
 ################################################################################
 
+
 def get_posts(path, which=None, verbose=True):
-    """ Prepares a list of posts taken from a directory.
+    """ Prepare a list of posts taken from a directory.
 
     Keyword arguments:
     path -- Path to the directory containing blog posts (type str).
@@ -54,8 +55,6 @@ def get_posts(path, which=None, verbose=True):
     Returns:
     A list of dict objects (type list).
     """
-
-
     """ Here we conditionally define include_test depending on what type of
     object 'which' is."""
 
@@ -147,6 +146,7 @@ def get_posts(path, which=None, verbose=True):
     posts.sort(key=lambda d: d['date'])
     return posts
 
+
 def json_date_parser(dct):
     """ A dirty workaround for parsing dates from JSON files.
 
@@ -178,9 +178,8 @@ def json_date_parser(dct):
                     pass
     return dct
 
-def process_raw_posts(path, completed_path, html_path, verbose=True):
-    """    """
 
+def process_raw_posts(path, completed_path, html_path, verbose=True):
     from os import listdir
     from os import remove
     from os.path import isfile
@@ -286,8 +285,10 @@ def process_raw_posts(path, completed_path, html_path, verbose=True):
         print("Finished processing markdown files.")
     return
 
+
 def json_date_writer(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
+
 
 def json_date_parser(dct):
     from datetime import datetime
@@ -305,11 +306,11 @@ def json_date_parser(dct):
                     dct[k] = datetime.strptime(v, fmt)
                 except ValueError:
                     pass
+
     return dct
 
-def process_md(md_path):
-    """    """
 
+def process_md(md_path):
     import re
 
     # Boundary is three or more '.' or '-'.
@@ -335,9 +336,8 @@ def process_md(md_path):
         markdown = md_handle.read()
     return markdown, process_yaml(yaml)
 
-def process_yaml(yaml_list):
-    """    """
 
+def process_yaml(yaml_list):
     import yaml
 
     yaml_dict = dict()
@@ -345,9 +345,8 @@ def process_yaml(yaml_list):
         yaml_dict.update(yaml.load(yaml_item))
     return yaml_dict
 
-def next_md_path(current_path):
-    """    """
 
+def next_md_path(current_path):
     from os.path import splitext
 
     current_path = splitext(current_path)[0]
@@ -358,16 +357,15 @@ def next_md_path(current_path):
         next_path = splitext(current_path)
     return next_path
 
+
 def generate_dir_path(path, suffix):
-    """    """
-
     import os
-
     id_ = path.split('.')[0]
     dir_path = "{}-{}".format(id_, suffix)
-    #if not os.path.isdir(dir_path):
-    #    os.makedirs(dir_path)
+    # if not os.path.isdir(dir_path):
+    #     os.makedirs(dir_path)
     return dir_path
+
 
 def call_pweave(
         input_file,
@@ -378,9 +376,8 @@ def call_pweave(
         plot=True,
         figformat=None,
         doctype='pandoc'
-    ):
-    """    """
-
+        ):
+    """ Call Pweave. """
     from pweave import Pweb
     from pweave.config import rcParams
 
@@ -391,13 +388,14 @@ def call_pweave(
     doc.storeresults = cache
     doc.sink = output_file
     if figformat is not None:
-        doc.updateformat({'figfmt' : figformat, 'savedformats' : [figformat]})
-    doc.parse()
+        doc.updateformat({'figfmt': figformat, 'savedformats': [figformat]})
+    output = doc.parse()
     doc.run()
     doc.format()
     doc.sink = output_file
     doc.write()
     return
+
 
 def call_knitr(
         input_file,
@@ -405,9 +403,8 @@ def call_knitr(
         rscript="Rscript",
         figure_path="images",
         cache_path="cache"
-    ):
-    """    """
-
+        ):
+    """ Call knitr on the command line."""
     import subprocess
 
     r_command = ";".join([
