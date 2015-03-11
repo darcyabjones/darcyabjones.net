@@ -260,22 +260,33 @@ def index():
 def blog():
     content = update(path=os.path.join(content_path, "blog.json"))
     posts = get_posts(posts_html)
+    current_tags = request.args.getlist("tags")
+    tags = list()
     for post in posts:
-        with open(post['html'], 'rU') as html_handle:
-            post['content'] = html_handle.read()
-    tags = request.args.getlist("tags")
+        if "tags" in post:
+            tags.extend(post["tags"])
+        if len(current_tags) > 0 and len(set(post["tags"]).intersection(set(current_tags))) == 0:
+            posts.remove(post)
+            continue
+        if "blurb" in post:
+            post['content'] = post['blurb']
+        else:
+            with open(post['html'], 'rU') as html_handle:
+                post['content'] = html_handle.read()
+
     return render_template(
         'blog.html',
         nav=nav("Blog"),
         page=content,
         posts=posts,
+        current_tags=current_tags,
         tags=tags)
 
 @app.route('/archive/')
 def archive_redirect():
     return redirect(url_for('archive'))
 
-@app.route('/posts/')
+@app.route('/posts/', methods=["POST", "GET"])
 def archive():
     content = update(path=os.path.join(content_path, "archive.json"))
     return render_template('archive.html', nav=nav("Archive"), page=content)
@@ -304,7 +315,7 @@ def test():
     string = "test"
     string = request.args.getlist("key")
     string2 = request.args.get("butt")
-    return str(string) + string2 + url_for('.test', key=["butt", "two"])
+    return str(string) + str(string2) + url_for('test', key=["butt", "two"])
 
 ##################################### Code #####################################
 
