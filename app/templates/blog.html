@@ -31,7 +31,7 @@
                                 <i class="fa fa-tags"></i>
                                 {% for tag in post.tags %}
                                     <a href="">
-                                        <span class="badge badge-info">
+                                        <span class="badge {% if tag in tags -%} badge-primary {% else -%} badge-success {%- endif %}">
                                             {{tag}}
                                         </span>
                                     </a>

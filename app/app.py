@@ -32,6 +32,7 @@ import app
 from flask import Flask
 from flask import url_for
 from flask import redirect
+from flask import request
 from flask import render_template
 from collections import defaultdict
 from datetime import datetime
@@ -262,7 +263,13 @@ def blog():
     for post in posts:
         with open(post['html'], 'rU') as html_handle:
             post['content'] = html_handle.read()
-    return render_template('blog.html', nav=nav("Blog"), page=content, posts=posts)
+    tags = request.args.getlist("tags")
+    return render_template(
+        'blog.html',
+        nav=nav("Blog"),
+        page=content,
+        posts=posts,
+        tags=tags)
 
 @app.route('/archive/')
 def archive_redirect():
@@ -292,6 +299,12 @@ def about():
     content['blurb'] = " ".join(content['blurb'])
     return render_template('about.html', nav=nav("About"), page=content)
 
+@app.route('/test/', methods=["POST", "GET"])
+def test():
+    string = "test"
+    string = request.args.getlist("key")
+    string2 = request.args.get("butt")
+    return str(string) + string2 + url_for('.test', key=["butt", "two"])
 
 ##################################### Code #####################################
 
