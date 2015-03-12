@@ -126,17 +126,6 @@ def get_posts(path, which=None, verbose=True):
                 )
             continue
 
-        """ Convert 'datetime' objects into more human friendly strings. """
-        if isinstance(value['date'], datetime):
-            # 'date_str' will look like '06 January 2015'.
-            value['date_str'] = value['date'].strftime("%d %B %Y")
-            # 'time_str' will look like '23:29'.
-            time_str = value['date'].strftime("%H:%M")
-            if time_str != "00:00":
-                value['time_str'] = time_str
-        else:
-            value['date_str'] = value['date']
-
         """ Everything is cool, add the post to the list."""
         posts.append(value)
 
@@ -145,7 +134,6 @@ def get_posts(path, which=None, verbose=True):
     in the future."""
     posts.sort(key=lambda d: d['date'])
     return posts
-
 
 def json_date_parser(dct):
     """ A dirty workaround for parsing dates from JSON files.
@@ -177,7 +165,6 @@ def json_date_parser(dct):
                 except ValueError:
                     pass
     return dct
-
 
 def process_raw_posts(path, completed_path, html_path, verbose=True):
     from os import listdir
@@ -288,27 +275,6 @@ def process_raw_posts(path, completed_path, html_path, verbose=True):
 
 def json_date_writer(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
-
-
-def json_date_parser(dct):
-    from datetime import datetime
-    date = "%Y-%m-%d"
-    date_time = "%Y-%m-%dT%H:%M:%S"
-    date_time2 = "%Y-%m-%dT%H:%M"
-    date_time3 = "%Y-%m-%d %H:%M"
-    date_time_offset = "%Y-%m-%dT%H:%M:%S%z"
-    time = "%H:%M:%S"
-    formats = [date, date_time, date_time2, date_time3, date_time_offset, time]
-    for k, v in dct.items():
-        if isinstance(v, str):
-            for fmt in formats:
-                try:
-                    dct[k] = datetime.strptime(v, fmt)
-                except ValueError:
-                    pass
-
-    return dct
-
 
 def process_md(md_path):
     import re

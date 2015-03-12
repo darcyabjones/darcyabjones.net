@@ -2,61 +2,66 @@
 {% block title %}{{page.title}}{% endblock title %}
 
 {% block content_content %}
-  <div class="row">
-    <div class="col-md-5 col-md-offset-2 col-lg-5 col-lg-offset-2 col-sm-7 col-sm-offset-1" id="blog-main-column">
-      <!-- the actual blog post: title/author/date/content -->
-      {% for post in posts %}
-        <h2>{{post.title}}</h1>
-        <p>
-          {% if post.user %}
-            <div class="header-icons">
-              <i class="fa fa-user"></i>
-              {{post.user}}
-            </div>
-          {% endif %}
-          {% if post.date_str %}
-            <div class="header-icons">
-              <i class="fa fa-calendar"></i>
-              {{post.date_str}}
-            </div>
-          {% endif %}
-          {% if post.time_str %}
-            <div class="header-icons">
-              <i class="fa fa-clock-o"></i>
-              {{post.time_str}}
-            </div>
-          {% endif %}
-          <div class="clear"></div>
-          {% if post.tags %}
-            <i class="fa fa-tags"></i>
-            {% for tag in post.tags %}
-              <a href="">
-                <span class="badge badge-info">
-                  {{tag}}
-                </span>
-              </a>
-            {% endfor %}
-          {% endif %}
-        </p>
-
-        {{post.content|safe}}
-
-        <a href="{{url_for('archive')+post.id_}}" class="more"><i class="fa fa-angle-double-right"></i> read more</a>
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-md-offset-1" id="blog-main-column">
+            <!-- the actual blog post: title/author/date/content -->
+            <section>
+                {% for post in posts %}
+                    <article>
+                        <h2>{{post.title}}</h1>
+                        <p>
+                            {% if post.user %}
+                                <div class="header-icons">
+                                    <i class="fa fa-user"></i>
+                                    {{post.user}}
+                                </div>
+                            {% endif %}
+                            {% if post.date %}
+                                <div class="header-icons">
+                                    <i class="fa fa-calendar"></i>
+                                    {{post.date|date}}
+                                </div>
+                                <div class="header-icons">
+                                    <i class="fa fa-clock-o"></i>
+                                    {{post.date|time}}
+                                </div>
+                            {% endif %}
+                            <div class="clear"></div>
+                            {% if post.tags %}
+                                <i class="fa fa-tags"></i>
+                                {% for tag in post.tags %}
+                                    <a href="">
+                                        <span class="badge badge-info">
+                                            {{tag}}
+                                        </span>
+                                    </a>
+                                {% endfor %}
+                            {% endif %}
+                        </p>
+                        {{post.content|safe}}
+                        <a href="{{url_for('archive')+post.id_}}" class="more"><i class="fa fa-angle-double-right"></i> read more</a>
+                        <div class="clear"></div>
+                    </article>
+                {% endfor %}
+            </section>
+        </div>
+        <div class="col-sm-3" id="side-nav">
+            <nav>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><i class="fa fa-tags"></i> Tags </h4>
+                    </div>
+                    <div class="panel-body">
+                        <a href="#">
+                            <span class="badge badge-info">Bootstrap</span>
+                        </a>
+                    </div>
+                </div>
+                <ul class="nav nav-list">
+                    <li><a href="#top" style="border-left:2px solid transparent;margin-top:1em">Top</a></li>
+                </ul>
+            </nav>
+        </div>
         <div class="clear"></div>
-      {% endfor %}
     </div>
-    <div class="col-md-3 col-lg-3 col-sm-3" id="blog-side-nav">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title"><i class="fa fa-tags"></i> Tags </h4>
-        </div>
-        <div class="panel-body">
-          <a href="">
-            <span class="badge badge-info">Bootstrap</span>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="clear"></div>
-  </div>
 {% endblock content_content %}

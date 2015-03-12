@@ -2,8 +2,247 @@
 {% block title %}{{page.title}}{% endblock title %}
 
 {% block content_content %}
-<h1>{{page.title}}</h1>
-<p>
-  Welcome on my awesome homepage.
-</p>
+<div class="row">
+    <div class="col-sm-9 col-lg-7 col-lg-offset-1">
+        <div id="about-blurb">
+            {{ page.blurb|safe }}
+            <a href="#">Test</a>
+        </div>
+        <section id="education">
+            <h2>Education</h2>
+            {% for course in page.education %}
+                <article class="item course">
+                    <strong class="about-course-title">
+                        {{ course.title }}
+                    </strong>
+
+                    <div class="clear"></div>
+
+                    <!--
+                    {% if course.level %}
+                        <div class="about-course-level">
+                            {{ course.level }}
+                        </div>
+                    {% endif %}
+
+                    {% if course.code %}
+                        <div class="about-course-code">
+                            {{ course.code }}
+                        </div>
+                    {% endif %}
+                    -->
+
+                    <div class="about-course-institution header-icons">
+                        <i class="fa fa-university"></i>
+                        <a href="{{ course.institution_url }}"> {{ course.institution }} </a>
+                    </div>
+
+                    <div class="about-date header-icons">
+                        <i class="fa fa-calendar"></i>
+                        <time datetime="{{ course.start }}">
+                            {{ course.start|date }}
+                        </time>
+                        to
+                        {% if course.end %}
+                            <time datetime="{{ course.end }}">
+                                {{ course.end|date }}
+                            </time>
+                        {% else %}
+                            current
+                        {% endif %}
+                    </div>
+
+                    <div class="clear"></div>
+
+                    {% if course.awards %}
+                        <div class="about-course-awards header-icons">
+                            <i class="fa fa-trophy"></i>
+                            {% for award in course.awards %}
+                                {% if not loop.last %}
+                                    {{ award }},
+                                {% else %}
+                                    {{ award }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="clear"></div>
+
+                    {% if course.notes or course.grades or course.code %}
+                        <button id="#{{ course.code }}-btn" type="button" class="btn btn-link more-btn collapsed" data-toggle="collapse" data-target="#{{ course.code }}">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>
+
+                        <div id="{{ course.code }}" class="collapse">
+                            {% if course.notes %}
+                                <p class="about-course-notes">
+                                    {{ course.notes }}
+                                </p>
+                            {% endif %}
+                            {% if course.code %}
+                                <div class="about-course-code">
+                                    Course code: {{ course.code }}
+                                </div>
+                            {% endif %}
+                            {% if course.grades %}
+                                <table class="table-condensed table-striped table-hover about-course-grades">
+                                    <thead class="about-course-grades">
+                                        <tr>
+                                            {% if course.grades[0].title %} <th> Subject </th> {% endif %}
+                                            {% if course.grades[0].code %} <th> Code </th> {% endif %}
+                                            {% if course.grades[0].year %} <th> Year </th> {% endif %}
+                                            {% if course.grades[0].mark %} <th> Mark (%) </th> {% endif %}
+                                        <tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for subject in course.grades %}
+                                            <tr>
+                                                {% if subject.title %} <td> {{ subject.title }} </td> {% endif %}
+                                                {% if subject.code %} <td> {{ subject.code }} </td> {% endif %}
+                                                {% if subject.year %} <td class="text-center"> {{ subject.year }} </td> {% endif %}
+                                                {% if subject.mark %} <td class="text-center"> {{ subject.mark }} </td> {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+        <section id="publications">
+            <h2>Publications</h2>
+            None yet. Watch this space.
+        </section>
+        <section id="conferences">
+            <h2 id="conferences">Conferences</h2>
+            {% for conference in page.conferences %}
+                <article class="item conference">
+                    <div class="about-conference-header">
+                        <strong class="about-conference-title">
+                            {{ conference.title }}
+                        </strong>
+                        - {{ conference.role }}
+                    </div>
+                    <div class="about-date">
+                        <i class="fa fa-calendar"></i>
+                        <time datetime="{{ conference.start }}">
+                            {{ conference.start|date }}
+                        </time>
+                        {% if conference.end %}
+                            to
+                            <time datetime="{{ conference.end }}">
+                                {{ conference.end|date }}
+                            </time>
+                        {% endif %}
+                    </div>
+                    {% if conference.locations %}
+                        {% for location in conference.locations %}
+                            <address class="about-location">
+                                {% if location.institution %}<i class="fa fa-university"></i> {{ location.institution }}<br>{% endif %}
+                                {% if location.building %}{{ location.building }}, {% endif %}
+                                {% if location.street %}{{ location.street }} {% endif %}
+                                {% if location.city %}{{ location.city }}<br> {% endif %}
+                                {% if location.state %}{{ location.state }} {% endif %}
+                                {% if location.postcode %}{{ location.postcode }}, {% endif %}
+                                {% if location.country %}{{ location.country }}{% endif %}
+                            </address>
+                        {% endfor %}
+                    {% endif %}
+                    {% if conference.abstract or conference.poster or conference.slides or conference.recording %}
+                        <button id="#{{ conference.code }}-btn" type="button" class="btn btn-link more-btn collapsed" data-toggle="collapse" data-target="#conf-{{ conference.code }}">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>
+                        <div id="conf-{{ conference.code }}" class="collapse">
+                            {% if conference.abstract %}
+                                <h5>Abstract</h5>
+                                <p>{{ conference.abstract|safe }}</p>
+                            {% endif %}
+                            {% if conference.poster %}
+                                <p>{{ conference.poster }}</p>
+                            {% endif %}
+                            {% if conference.slides %}
+                                <p>{{ conference.slides }}</p>
+                            {% endif %}
+                            {% if conference.recording %}
+                                <p>{{ conference.recording }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+        <section id="employment">
+            <h2>Employment</h2>
+            {% for job in page.employment %}
+                <article class="item job">
+                    <div class="about-job-header">
+                        <strong class="about-job-position">
+                            {{ job.position }}
+                        </strong>
+                        - {{ job.employer }}
+                    </div>
+                    <div class="about-date">
+                        <i class="fa fa-calendar"></i>
+                        <time datetime="{{ job.start }}">
+                            {{ job.start|date }}
+                        </time>
+                        to
+                        {% if job.end %}
+                            <time datetime="{{ job.end }}">
+                                {{ job.end|date }}
+                            </time>
+                        {% else %}
+                            <time>
+                                current
+                            </time>
+                        {% endif %}
+                    </div>
+                    {% if job.locations %}
+                        {% for location in job.locations %}
+                            <address class="about-location">
+                                {% if location.institution %}<i class="fa fa-university"></i> {{ location.institution }}<br>{% endif %}
+                                {% if location.building %}{{ location.building }}, {% endif %}
+                                {% if location.street %}{{ location.street }}, {% endif %}
+                                {% if location.city %}{{ location.city }}<br> {% endif %}
+                                {% if location.state %}{{ location.state }} {% endif %}
+                                {% if location.postcode %}{{ location.postcode }}, {% endif %}
+                                {% if location.country %}{{ location.country }}{% endif %}
+                            </address>
+                        {% endfor %}
+                    {% endif %}
+                    {% if job.responsibilities or job.notes or job.contacts %}
+                        <button id="#{{ job.code }}-btn" type="button" class="btn btn-link more-btn collapsed" data-toggle="collapse" data-target="#job-{{ job.code }}">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>
+                        <div id="job-{{ job.code }}" class="collapse">
+                            {% if job.notes %}
+                                <p>{{ job.notes|safe }}</p>
+                            {% endif %}
+                            {% if job.responsibilities %}
+                                <p>{{ job.responsibilities }}</p>
+                            {% endif %}
+                            {% if job.contacts %}
+                                <p>{{ job.contacts }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+    </div>
+    <div class="col-sm-3" id="side-nav">
+        <nav class="affix">
+            <ul class="nav nav-list">
+                <li><a href="#education">Education</a></li>
+                <li><a href="#publications">Publications</a></li>
+                <li><a href="#conferences">Conferences</a></li>
+                <li><a href="#employment">Employment</a></li>
+                <li><a href="#top", style="border-left:2px solid transparent;margin-top:1em">Top</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
 {% endblock content_content %}

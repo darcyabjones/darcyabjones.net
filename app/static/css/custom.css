@@ -38,7 +38,22 @@ body, html {
   width: 100%;
   height: 100%;
 }
-
+body {
+    padding-top: 50px;
+}
+section, article {
+    padding-top:2.5em;
+    margin-top:-2.5em;
+}
+.headroom {
+    transition: transform 200ms linear;
+}
+.headroom--pinned {
+    transform: translateY(0%);
+}
+.headroom--unpinned {
+    transform: translateY(-100%);
+}
 .navbar-default {
   background-color: #973253;
 }
@@ -64,7 +79,6 @@ body, html {
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #FFFFFF;
 }
-
 .navbar-default .navbar-toggle {
   border-color: #FFFFFF;
 }
@@ -78,7 +92,6 @@ body, html {
 .navbar-collapse {
   border-top: 0px none;
 }
-
 @media (max-width: 768px) {
   .container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse, .container-fluid>.navbar-collapse {
     border-bottom: 0px none;
@@ -98,7 +111,6 @@ body, html {
     padding-right: 2em;
   }
 }
-
 .header {
   display: table;
   position: relative;
@@ -109,7 +121,6 @@ body, html {
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
-  padding-top:50px;
   margin-bottom: -50px;
   padding-bottom: 50px;
 }
@@ -119,19 +130,18 @@ body, html {
   text-align: center;
   vertical-align: middle;
 }
-
+.row {
+    margin-top:1.5em;
+}
 /* Wrapper for page content to push down footer */
 .wrap {
   min-height: 100%;
   height: auto !important;
   height: 100%;
-  /* Negative indent footer by it's height */
-  padding-top: 50px;
   margin-bottom: -125px;
   padding-bottom: 125px;
 }
 /* Set the fixed height of the footer here */
-#push,
 #footer {
   height: 125px;
 }
@@ -191,6 +201,7 @@ body, html {
   margin-top:2em;
   font-size:1.1em;
   color:#FFFFFF;
+  text-align:center;
 }
 #home-portrait {
   margin-top:3em;
@@ -207,9 +218,6 @@ body, html {
   text-decoration:none;
   color:rgba(255,255,255,0.6)
 }
-#blog-side-nav {
-  margin-top:1em;
-}
 #licensebutton_slim {
   margin-left:1em;
   margin-right:1em;
@@ -221,13 +229,100 @@ body, html {
 }
 #navbar-brand {
   font-family:SetFireToTheRain;
-  font-size:2.5em;
+  font-size:2.2em;
 }
 .nav-item {
   font-family:SetFireToTheRain;
   font-size:1.5em;
 }
-
+.about-course-notes {
+    margin-top:0.5em;
+}
+.more-btn, .more-btn:hover, .more-btn:active {
+    text-transform:none;
+    font-weight:normal;
+    font-variant:normal;
+    font-size:inherit;
+    margin:0;
+    border:0;
+    padding:0;
+}
+button.more-btn:after {
+    content:"view less";
+}
+button.more-btn.collapsed:after {
+    content:"view more";
+}
+.about-course-grades {
+    font-size:small;
+}
+.about-location {
+    margin-top:0.5em;
+    margin-bottom:0;
+}
+.item {
+    margin-bottom:1.5em;
+}
+/* sidebar */
+#side-nav {
+    padding-left: 2em;
+    margin-bottom: 1.5em;
+}
+#side-nav > ul {
+    overflow-y: auto;
+    height: 100%;
+}
+/* all links */
+#side-nav .nav>li>a {
+    color: #999;
+    padding: 0;
+    font-size: 1em;
+    font-weight: 400;
+    padding-left: 0.5em;
+    border-left: 2px solid transparent;
+}
+/* active & hover links */
+#side-nav .nav>.active>a,
+#side-nav .nav>li>a:hover,
+#side-nav .nav>li>a:focus {
+    color: #973253;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 2px solid #973253;
+}
+/* nested links */
+#side-nav .nav .nav>li>a {
+    padding-left: 1.5em;
+    font-size:0.9em;
+}
+/* all active links */
+#side-nav .nav>.active>a,
+#side-nav .nav>.active:hover>a,
+#side-nav .nav>.active:focus>a {
+    font-weight: 700;
+}
+/* nested active links */
+#side-nav .nav .nav>.active>a,
+#side-nav .nav .nav>.active:hover>a,
+#side-nav .nav .nav>.active:focus>a {
+    font-weight: 500;
+}
+/* hide all (inactive) nested list */
+#side-nav .nav ul.nav {
+    display: none;
+}
+/* show active nested list */
+#side-nav .nav>.active>ul.nav {
+    display: block;
+}
+#side-nav.affix {
+    top: 2em;
+}
+@media screen and (max-width: 768px){
+    #side-nav {
+        display:none
+    }
+}
 /* Loosely based on pygment's tango colors */
 table.sourceCode, tr.sourceCode, td.sourceCode, table.sourceCode pre
 { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; background-color: #f8f8f8 }
