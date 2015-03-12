@@ -323,6 +323,10 @@ button.more-btn.collapsed:after {
         display:none
     }
 }
+
+.badge-success {
+    background-color:#28b62c;
+}
 /* Loosely based on pygment's tango colors */
 table.sourceCode, tr.sourceCode, td.sourceCode, table.sourceCode pre
 { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; background-color: #f8f8f8 }

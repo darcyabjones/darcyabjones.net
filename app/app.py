@@ -32,6 +32,7 @@ import app
 from flask import Flask
 from flask import url_for
 from flask import redirect
+from flask import request
 from flask import render_template
 from collections import defaultdict
 from datetime import datetime
@@ -259,16 +260,33 @@ def index():
 def blog():
     content = update(path=os.path.join(content_path, "blog.json"))
     posts = get_posts(posts_html)
+    current_tags = request.args.getlist("tags")
+    tags = list()
     for post in posts:
-        with open(post['html'], 'rU') as html_handle:
-            post['content'] = html_handle.read()
-    return render_template('blog.html', nav=nav("Blog"), page=content, posts=posts)
+        if "tags" in post:
+            tags.extend(post["tags"])
+        if len(current_tags) > 0 and len(set(post["tags"]).intersection(set(current_tags))) == 0:
+            posts.remove(post)
+            continue
+        if "blurb" in post:
+            post['content'] = post['blurb']
+        else:
+            with open(post['html'], 'rU') as html_handle:
+                post['content'] = html_handle.read()
+
+    return render_template(
+        'blog.html',
+        nav=nav("Blog"),
+        page=content,
+        posts=posts,
+        current_tags=current_tags,
+        tags=tags)
 
 @app.route('/archive/')
 def archive_redirect():
     return redirect(url_for('archive'))
 
-@app.route('/posts/')
+@app.route('/posts/', methods=["POST", "GET"])
 def archive():
     content = update(path=os.path.join(content_path, "archive.json"))
     return render_template('archive.html', nav=nav("Archive"), page=content)
@@ -292,6 +310,12 @@ def about():
     content['blurb'] = " ".join(content['blurb'])
     return render_template('about.html', nav=nav("About"), page=content)
 
+@app.route('/test/', methods=["POST", "GET"])
+def test():
+    string = "test"
+    string = request.args.getlist("key")
+    string2 = request.args.get("butt")
+    return str(string) + str(string2) + url_for('test', key=["butt", "two"])
 
 ##################################### Code #####################################
 
