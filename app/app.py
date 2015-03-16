@@ -34,6 +34,7 @@ from flask import url_for
 from flask import redirect
 from flask import request
 from flask import render_template
+from flask import abort
 from collections import defaultdict
 from datetime import datetime
 import json
@@ -58,8 +59,9 @@ posts_raw = os.path.join(content_path, 'posts_raw')
 
 app = Flask(__name__)
 
+
 def update(path):
-    """ Loads JSON content for the page.
+    """ Load JSON content for the page.
 
     Keyword arguments:
     path -- The path to the JSON file (type str).
@@ -76,6 +78,7 @@ def update(path):
     finally:
         json_handle.close()
     return json_content
+
 
 def json_date_parser(dct):
     """ A dirty workaround for parsing dates from JSON files.
@@ -108,16 +111,19 @@ def json_date_parser(dct):
                     pass
     return dct
 
+
 def format_date(value):
     return value.strftime("%d %B %Y")
 app.jinja_env.filters['date'] = format_date
+
 
 def format_time(value):
     return value.strftime("%H:%M")
 app.jinja_env.filters['time'] = format_time
 
+
 def get_posts(path, which=None, verbose=True):
-    """ Prepares a list of posts taken from a directory.
+    """ Prepare a list of posts taken from a directory.
 
     Keyword arguments:
     path -- Path to the directory containing blog posts (type str).
@@ -130,8 +136,6 @@ def get_posts(path, which=None, verbose=True):
     Returns:
     A list of dict objects (type list).
     """
-
-
     """ Here we conditionally define include_test depending on what type of
     object 'which' is."""
 
@@ -179,7 +183,7 @@ def get_posts(path, which=None, verbose=True):
         of the current iteration and continue with the next key, value pair. """
         if not include_test(key):
             continue
-        value['id_'] = key
+        value['id_'] = key.split("-")[-1]
         if 'json' in value:
             with open(value['json'], "rU") as json_handle:
                 value.update(json.load(json_handle, object_hook=json_date_parser))
@@ -210,10 +214,30 @@ def get_posts(path, which=None, verbose=True):
     objects. I might need to figure out a better way of ordering posts by date
     in the future."""
     posts.sort(key=lambda d: d['date'])
-    return posts
+
+    current_year = None
+    current_month = None
+    first_post = True
+    for post in posts:
+        year = post['date'].year
+        month = post['date'].month
+        str_month = post['date'].strftime("%Y-%B")
+        if first_post:
+            current_year = year
+            current_month = month
+            post["id_"] = str_month
+        elif year > current_year or month > current_month:
+            current_year = year
+            current_month = month
+            post["id_"] = str_month
+        else:
+            new_posts.append(post)
+
+    return new_posts
+
 
 def nav(current):
-    """ Creates a dictionary to construct the current navigation bar from.
+    """ Create a dictionary to construct the current navigation bar from.
 
     This function is pretty straight-forward. To have the navigation button for
     the currently active page highlighted we convert 'current' to a boolean
@@ -228,27 +252,28 @@ def nav(current):
     """
     nav_list = [
         {
-            "name":"Home",
-            "path":url_for('index'),
-            "current":(current.lower() in {"home", "index"})
+            "name": "Home",
+            "path": url_for('index'),
+            "current": (current.lower() in {"home", "index"})
         },
         {
-            "name":"Blog",
-            "path":url_for('blog'),
-            "current":(current.lower() in {"blog", "archive", "post"})
+            "name": "Blog",
+            "path" :url_for('blog'),
+            "current": (current.lower() in {"blog", "archive", "post"})
         },
         {
-            "name":"Projects",
-            "path":url_for('projects'),
-            "current":(current.lower() == "projects")
+            "name": "Projects",
+            "path": url_for('projects'),
+            "current": (current.lower() == "projects")
         },
         {
-            "name":"About",
-            "path":url_for('about'),
-            "current":(current.lower() == "about")
+            "name": "About",
+            "path": url_for('about'),
+            "current": (current.lower() == "about")
         }
     ]
     return nav_list
+
 
 @app.route('/')
 def index():
@@ -256,18 +281,74 @@ def index():
     content['blurb'] = " ".join(content['blurb'])
     return render_template('index.html', nav=nav("Home"), page=content)
 
+
+class SideNavDate(object):
+    def __init__(self):
+        from collections import OrderedDict
+        self.__dict__ = OrderedDict()
+    def __setitem__(self, key, value):
+        if key not in self.__dict__:
+            self.__dict__[key] = list()
+        self.__dict__[key].append(value)
+        return
+    def add(self, dtime):
+        year = dtime.strftime("%Y")
+        month = dtime.strftime("%B")
+        self.__setitem__(year, month)
+        return
+    def __getitem__(self, key):
+        return self.__dict__[key]
+    def __iter__(self):
+        self.sort()
+        return iter(self.__dict__)
+    def sort(self):
+        from collections import OrderedDict
+        from datetime import datetime
+        sorted_dict = sorted(self.__dict__.items(), key=lambda t: datetime.strptime(t[0], "%Y").year)
+        for tup in sorted_dict:
+            tup[1].sort(key=lambda m: datetime.strptime(m, "%B").month)
+        self.__dict__ = OrderedDict(sorted_dict)
+    def __repr__(self):
+        return repr(self.__dict__)
+    def __str__(self):
+        return str(self.__dict__)
+
 @app.route('/blog/')
-def blog():
+@app.route('/blog/<post_year>/')
+@app.route('/blog/<post_year>/<post_month>/')
+@app.route('/blog/<post_year>/<post_month>/<post_day>/')
+def blog(post_year=None, post_month=None, post_day=None):
+    filter_dates = {"post_year": post_year, "post_month": post_month, "post_day": post_day}
     content = update(path=os.path.join(content_path, "blog.json"))
     posts = get_posts(posts_html)
     current_tags = request.args.getlist("tags")
+    current_tags = [tag for tag in current_tags if current_tags.count(tag) % 2 == 1]
+    current_tags = list(set(current_tags))
+    if current_tags != request.args.getlist("tags"):
+        return redirect(url_for('blog', tags=current_tags, **filter_dates))
     tags = list()
+    side_nav_dates = SideNavDate()
     for post in posts:
+        if "type" in post and post["type"] == "dummy":
+            continue
         if "tags" in post:
             tags.extend(post["tags"])
         if len(current_tags) > 0 and len(set(post["tags"]).intersection(set(current_tags))) == 0:
             posts.remove(post)
             continue
+        if post_year != None:
+            if str(post["date"].year) != post_year:
+                posts.remove(post)
+                continue
+            if post_month != None:
+                if str(post["date"].month) != post_month:
+                    posts.remove(post)
+                    continue
+                if post_day != None:
+                    if str(post["date"].day) != post_day:
+                        posts.remove(post)
+                        continue
+        side_nav_dates.add(post["date"])
         if "blurb" in post:
             post['content'] = post['blurb']
         else:
@@ -280,29 +361,29 @@ def blog():
         page=content,
         posts=posts,
         current_tags=current_tags,
-        tags=tags)
+        tags=tags,
+        filter_dates=filter_dates,
+        side_nav_dates=side_nav_dates)
 
-@app.route('/archive/')
-def archive_redirect():
-    return redirect(url_for('archive'))
 
-@app.route('/posts/', methods=["POST", "GET"])
-def archive():
+@app.route('/blog/<post_year>/<post_month>/<post_day>/<post_id>')
+def show_post(post_year, post_month, post_day, post_id):
+    post_name = "-".join([post_year, post_month, post_day, post_id])
     content = update(path=os.path.join(content_path, "archive.json"))
-    return render_template('archive.html', nav=nav("Archive"), page=content)
-
-@app.route('/posts/<post_id>')
-def show_post(post_id):
-    content = update(path=os.path.join(content_path, "archive.json"))
-    post = get_posts(posts_html, post_id)[0]
+    try:
+        post = get_posts(posts_html, post_name)[0]
+    except IndexError:
+        abort(404)
     with open(post['html'], 'rU') as html_handle:
         post['content'] = html_handle.read()
     return render_template('post.html', nav=nav("Post"), page=content, post=post)
+
 
 @app.route('/projects/')
 def projects():
     content = update(path=os.path.join(content_path, "projects.json"))
     return render_template('projects.html', nav=nav("Projects"), page=content)
+
 
 @app.route('/about')
 def about():
@@ -310,14 +391,13 @@ def about():
     content['blurb'] = " ".join(content['blurb'])
     return render_template('about.html', nav=nav("About"), page=content)
 
-@app.route('/test/', methods=["POST", "GET"])
-def test():
-    string = "test"
-    string = request.args.getlist("key")
-    string2 = request.args.get("butt")
-    return str(string) + str(string2) + url_for('test', key=["butt", "two"])
 
-##################################### Code #####################################
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html", nav=nav("None")), 404
+
+
+#################################### Code ####################################
 
 if __name__ == '__main__':
-    app.run(debug=True) # host='0.0.0.0' # Ditch debug on production.
+    app.run(debug=True)  # host='0.0.0.0' # Ditch debug on production.
