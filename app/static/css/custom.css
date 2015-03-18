@@ -320,12 +320,15 @@ button.more-btn.collapsed:after {
 }
 @media screen and (max-width: 768px){
     #side-nav {
-        display:none
+        display:none;
     }
 }
-
 .badge-success {
     background-color:#28b62c;
+}
+.blog-date {
+    margin: 0px;
+    padding: 0px;
 }
 /* Loosely based on pygment's tango colors */
 table.sourceCode, tr.sourceCode, td.sourceCode, table.sourceCode pre

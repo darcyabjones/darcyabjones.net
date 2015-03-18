@@ -15,10 +15,10 @@
         <!-- the actual blog post: title/author/date/content -->
         <section>
             {% for post in posts %}
-            {% if post.type == "dummy" %}
-            <div id="{{post.id_}}"></div>
+            {% if post.type == "date" %}
+            <div id="{{ post.id_ }}" class="blog-date"></div>
             {% else %}
-            <article>
+            <article {% if post.nav_id %}id="{{ post.nav_id }}"{% endif %}>
                 <h2>{{post.title}}</h1>
                 <p>
                     {% if post.user %}
@@ -51,7 +51,6 @@
             </article>
             {% endif %}
             {% endfor %}
-
         </section>
     </div>
     <div class="col-sm-3" id="side-nav">
@@ -68,13 +67,15 @@
                 </div>
             </div>
             <ul class="nav nav-list">
-                {% for year in side_nav_dates %}
-                <li><a href="#{{year}}">{{year}}</a></li>
-                <ul>
-                    {% for month in side_nav_dates[year] %}
-                    <li><a href="#{{year+month}}">{{month}}</a></li>
-                    {% endfor %}
-                </ul>
+                {% for date in side_nav_dates %}
+                <li>
+                    <a href="#{{ date.target }}">{{ date.target }}</a>
+                    <ul class="nav nav-list">
+                        {% for sub_date in date.children %}
+                        <li><a href="#{{ sub_date.target }}">{{ sub_date.value }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
                 {% endfor %}
                 <li><a href="#top" style="border-left:2px solid transparent;margin-top:1em">Top</a></li>
             </ul>

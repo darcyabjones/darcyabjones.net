@@ -214,26 +214,45 @@ def get_posts(path, which=None, verbose=True):
     objects. I might need to figure out a better way of ordering posts by date
     in the future."""
     posts.sort(key=lambda d: d['date'])
+    return posts
 
+
+def side_nav_dates(posts):
+    posts.sort(key=lambda d: d['date'])
+    dates = list()
+    new_posts = list()
     current_year = None
     current_month = None
     first_post = True
     for post in posts:
         year = post['date'].year
         month = post['date'].month
-        str_month = post['date'].strftime("%Y-%B")
+        str_year = post['date'].strftime("%Y")
+        str_month = post['date'].strftime("%B")
+        str_ym = post['date'].strftime("%Y-%B")
         if first_post:
+            first_post = False
             current_year = year
             current_month = month
-            post["id_"] = str_month
-        elif year > current_year or month > current_month:
+            new_posts.append({"id_": str_year, "type": "date"})
+            new_posts.append({"id_": str_ym, "type": "date"})
+            new_posts.append(post)
+            dates.append({"target": str_year, "children": [{"value": str_month, "target": str_ym}]})
+        elif year != current_year:
             current_year = year
             current_month = month
-            post["id_"] = str_month
+            new_posts.append({"id_": str_year, "type": "date"})
+            new_posts.append({"id_": str_ym, "type": "date"})
+            new_posts.append(post)
+            dates.append({"target": str_year, "children": [{"value": str_month, "target": str_ym}]})
+        elif month != current_month:
+            current_month = month
+            new_posts.append({"id_": str_ym, "type": "date"})
+            new_posts.append(post)
+            dates[-1]["children"].append({"value": str_month, "target": str_ym})
         else:
             new_posts.append(post)
-
-    return new_posts
+    return new_posts, dates
 
 
 def nav(current):
@@ -281,38 +300,6 @@ def index():
     content['blurb'] = " ".join(content['blurb'])
     return render_template('index.html', nav=nav("Home"), page=content)
 
-
-class SideNavDate(object):
-    def __init__(self):
-        from collections import OrderedDict
-        self.__dict__ = OrderedDict()
-    def __setitem__(self, key, value):
-        if key not in self.__dict__:
-            self.__dict__[key] = list()
-        self.__dict__[key].append(value)
-        return
-    def add(self, dtime):
-        year = dtime.strftime("%Y")
-        month = dtime.strftime("%B")
-        self.__setitem__(year, month)
-        return
-    def __getitem__(self, key):
-        return self.__dict__[key]
-    def __iter__(self):
-        self.sort()
-        return iter(self.__dict__)
-    def sort(self):
-        from collections import OrderedDict
-        from datetime import datetime
-        sorted_dict = sorted(self.__dict__.items(), key=lambda t: datetime.strptime(t[0], "%Y").year)
-        for tup in sorted_dict:
-            tup[1].sort(key=lambda m: datetime.strptime(m, "%B").month)
-        self.__dict__ = OrderedDict(sorted_dict)
-    def __repr__(self):
-        return repr(self.__dict__)
-    def __str__(self):
-        return str(self.__dict__)
-
 @app.route('/blog/')
 @app.route('/blog/<post_year>/')
 @app.route('/blog/<post_year>/<post_month>/')
@@ -327,10 +314,7 @@ def blog(post_year=None, post_month=None, post_day=None):
     if current_tags != request.args.getlist("tags"):
         return redirect(url_for('blog', tags=current_tags, **filter_dates))
     tags = list()
-    side_nav_dates = SideNavDate()
     for post in posts:
-        if "type" in post and post["type"] == "dummy":
-            continue
         if "tags" in post:
             tags.extend(post["tags"])
         if len(current_tags) > 0 and len(set(post["tags"]).intersection(set(current_tags))) == 0:
@@ -348,12 +332,14 @@ def blog(post_year=None, post_month=None, post_day=None):
                     if str(post["date"].day) != post_day:
                         posts.remove(post)
                         continue
-        side_nav_dates.add(post["date"])
         if "blurb" in post:
             post['content'] = post['blurb']
         else:
             with open(post['html'], 'rU') as html_handle:
                 post['content'] = html_handle.read()
+        post["type"] = "post"
+
+    posts, dates = side_nav_dates(posts)
 
     return render_template(
         'blog.html',
@@ -363,7 +349,7 @@ def blog(post_year=None, post_month=None, post_day=None):
         current_tags=current_tags,
         tags=tags,
         filter_dates=filter_dates,
-        side_nav_dates=side_nav_dates)
+        side_nav_dates=dates)
 
 
 @app.route('/blog/<post_year>/<post_month>/<post_day>/<post_id>')
