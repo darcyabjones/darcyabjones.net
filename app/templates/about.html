@@ -6,7 +6,6 @@
     <div class="col-sm-9 col-lg-7 col-lg-offset-1">
         <div id="about-blurb">
             {{ page.blurb|safe }}
-            <a href="#">Test</a>
         </div>
         <section id="education">
             <h2>Education</h2>
@@ -246,3 +245,13 @@
     </div>
 </div>
 {% endblock content_content %}
+
+{% block javascript %}
+{{ super() }}
+<script type="text/javascript">
+    $('body').scrollspy({
+        target: '#side-nav',
+        offset: 50px
+    });
+</script>
+{% endblock javascript %}

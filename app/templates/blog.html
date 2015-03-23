@@ -19,8 +19,7 @@
             <div id="{{ post.id_ }}" class="blog-date"></div>
             {% else %}
             <article {% if post.nav_id %}id="{{ post.nav_id }}"{% endif %}>
-                <h2>{{post.title}}</h1>
-                <p>
+                <h1 class="article-header">{{post.title}}</h1>
                     {% if post.user %}
                     <div class="header-icons">
                         <i class="fa fa-user"></i>
@@ -44,7 +43,6 @@
                         {{ tagElement(tag, current=current_tags) }}
                     {% endfor %}
                     {% endif %}
-                </p>
                 {{post.content|safe}}
                 <a href="{{ url_for('show_post', post_year=post.date.year, post_month=post.date.month, post_day=post.date.day, post_id=post.id_) }}" class="more"><i class="fa fa-angle-double-right"></i> read more</a>
                 <div class="clear"></div>
@@ -55,18 +53,15 @@
     </div>
     <div class="col-sm-3" id="side-nav">
         <nav class="affix">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title" style="display:inline"><i class="fa fa-tags"></i> Tags </h4>
-                    <a href="{{ url_for('blog', **filter_dates)}}", style="float:right">Clear tags</a>
-                </div>
-                <div class="panel-body">
-                    {% for tag in tags %}
-                        {{ tagElement(tag, current=current_tags) }}
-                    {% endfor %}
-                </div>
-            </div>
             <ul class="nav nav-list">
+                <li style="margin-bottom:1.5em;">
+                    <span><i class="fa fa-tags"></i> Tags</span>
+                    <div id="tags">
+                        {% for tag in tags %}
+                        {{ tagElement(tag, current=current_tags) }}
+                        {% endfor %}
+                    </div>
+                </li>
                 {% for date in side_nav_dates %}
                 <li>
                     <a href="#{{ date.target }}">{{ date.target }}</a>
@@ -84,3 +79,13 @@
     <div class="clear"></div>
 </div>
 {% endblock content_content %}
+
+{% block javascript %}
+{{ super() }}
+<script type="text/javascript">
+$('body').scrollspy({
+    target: '#side-nav',
+    offset: 50px
+});
+</script>
+{% endblock javascript %}

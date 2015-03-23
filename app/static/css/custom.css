@@ -41,9 +41,33 @@ body, html {
 body {
     padding-top: 50px;
 }
-section, article {
+section {
     padding-top:2.5em;
     margin-top:-2.5em;
+}
+.blog-date {
+    padding-top:4.5em;
+    margin-top:-4.5em;
+}
+.article-header {
+    padding-top:0px;
+    margin-top: 0px;
+    font-size: 36px;
+}
+h1 {
+    font-size:30px;
+}
+h2 {
+    font-size: 24px
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size:14px;
+}
+h5 {
+    font-size: 12px;
 }
 .headroom {
     transition: transform 200ms linear;
@@ -138,14 +162,13 @@ section, article {
   min-height: 100%;
   height: auto !important;
   height: 100%;
-  margin-bottom: -125px;
-  padding-bottom: 125px;
+  margin-bottom: -150px;
+  padding-bottom: 150px;
 }
 /* Set the fixed height of the footer here */
 #footer {
   height: 125px;
-}
-#footer {
+  margin-top: 25px;
   border-top: 1px solid #e7e7e7;
 }
 .share-button {
@@ -325,10 +348,6 @@ button.more-btn.collapsed:after {
 }
 .badge-success {
     background-color:#28b62c;
-}
-.blog-date {
-    margin: 0px;
-    padding: 0px;
 }
 /* Loosely based on pygment's tango colors */
 table.sourceCode, tr.sourceCode, td.sourceCode, table.sourceCode pre

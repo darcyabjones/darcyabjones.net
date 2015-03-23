@@ -338,6 +338,7 @@ def blog(post_year=None, post_month=None, post_day=None):
             with open(post['html'], 'rU') as html_handle:
                 post['content'] = html_handle.read()
         post["type"] = "post"
+    tags = list(set(tags))
 
     posts, dates = side_nav_dates(posts)
 
