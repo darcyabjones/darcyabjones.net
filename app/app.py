@@ -51,6 +51,7 @@ content_path = os.path.join(base_path, 'content')
 posts_html = os.path.join(content_path, 'posts')
 posts_processed = os.path.join(content_path, 'posts_processed')
 posts_raw = os.path.join(content_path, 'posts_raw')
+projects_html = os.path.join(content_path, "projects")
 
 ################################ Define Classes ################################
 
@@ -120,6 +121,23 @@ app.jinja_env.filters['date'] = format_date
 def format_time(value):
     return value.strftime("%H:%M")
 app.jinja_env.filters['time'] = format_time
+
+
+def get_projects(path=projects_html):
+    """ . """
+    projects = list()
+    for file_ in listdir(path):
+        if isfile(join(path, file_)):
+            name = file_.split('.')[0]
+            type_ = splitext(file_)[1].strip('.')
+            file_path = join(path, file_)
+            if type_ == "html":
+                with open(file_path) as handle:
+                    projects.append((name, handle.read()))
+    projects.sort(key=lambda t: t[0])
+    projects = [t[1] for t in projects]
+    return projects
+
 
 
 def get_posts(path, which=None, verbose=True):
@@ -369,7 +387,8 @@ def show_post(post_year, post_month, post_day, post_id):
 @app.route('/projects/')
 def projects():
     content = update(path=os.path.join(content_path, "projects.json"))
-    return render_template('projects.html', nav=nav("Projects"), page=content)
+    projects = get_projects(projects_html)
+    return render_template('projects.html', nav=nav("Projects"), page=content, projects=projects)
 
 
 @app.route('/about')
