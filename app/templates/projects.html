@@ -4,9 +4,11 @@
 {% block content_content %}
 <section>
 {% for project in projects %}
-<article>
-    {{ project|safe }}
-</article>
+    <article>
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            {{ project|safe }}
+        </div>
+    </article>
 {% endfor %}
 </section>
 {% endblock content_content %}

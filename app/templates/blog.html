@@ -14,7 +14,7 @@
     <div class="col-sm-9 col-md-7 col-md-offset-1" id="blog-main-column">
         <!-- the actual blog post: title/author/date/content -->
         <section>
-            {% for post in posts %}
+        {% for post in posts %}
             {% if post.type == "date" %}
             <div id="{{ post.id_ }}" class="blog-date"></div>
             {% else %}
@@ -48,7 +48,7 @@
                 <div class="clear"></div>
             </article>
             {% endif %}
-            {% endfor %}
+        {% endfor %}
         </section>
     </div>
     <div class="col-sm-3" id="side-nav">

@@ -1,6 +1,9 @@
 {
   "title":"About",
-  "blurb":[],
+  "blurb":[
+      "I am a biologist and a nerd",
+      "",
+  ],
   "education":[
       {
           "institution":"La Trobe University",
