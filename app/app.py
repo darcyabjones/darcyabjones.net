@@ -404,7 +404,7 @@ def page_not_found(e):
 
 
 @app.route('/termsofuse')
-def tou():
+def termsofuse():
     terms = {
         "title": "Terms of use",
         "terms": (
