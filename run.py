@@ -33,5 +33,8 @@ from app.app import posts_html
 from app.app import posts_processed
 from app.app import posts_raw
 
-if __name__ == '__main__':
+def main():
     app.app.run(debug=True)
+
+if __name__ == '__main__':
+    main()
