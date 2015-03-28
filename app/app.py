@@ -418,6 +418,7 @@ def tou():
             "this information. These terms and conditions of use are subject "
             "to change at anytime and without notice.")
         }
+    return render_template("termsofuse.html", nav=nav("None"), page=terms)
 
 #################################### Code ####################################
 
