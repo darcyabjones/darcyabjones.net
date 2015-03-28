@@ -6,7 +6,6 @@ itsdangerous==0.24
 Jinja2==2.7.3
 MarkupSafe==0.23
 Pweave==0.23
-pypandoc==0.8.4
 PyYAML==3.11
 pyzmq==14.4.1
 tornado==4.0.2
