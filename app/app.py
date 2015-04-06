@@ -1,32 +1,27 @@
-#! /usr/bin/env python3
+""" . """
 
 __program__ = "app"
-__version__ = "0.1.0"
 __author__ = "Darcy Jones"
-__date__ = "30 December 2014"
+__date__ = "06 April 2015"
 __author_email__ = "darcy.ab.jones@gmail.com"
 __license__ = """
-################################################################################
+Copyright (C) 2015  Darcy Jones
 
-    Copyright (C) 2014  Darcy Jones
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-################################################################################
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-################################ Import Modules ################################
+"""############################ Import Modules #############################"""
 
 import app
 from flask import Flask
@@ -36,6 +31,7 @@ from flask import request
 from flask import render_template
 from flask import abort
 from collections import defaultdict
+from collections import OrderedDict
 from datetime import datetime
 import json
 import yaml
@@ -44,6 +40,7 @@ from os import listdir
 from os.path import splitext
 from os.path import join
 from os.path import isfile
+from html.parser import HTMLParser
 
 
 base_path = os.path.dirname(app.__file__)
@@ -53,10 +50,148 @@ posts_processed = os.path.join(content_path, 'posts_processed')
 posts_raw = os.path.join(content_path, 'posts_raw')
 projects_html = os.path.join(content_path, "projects")
 
-################################ Define Classes ################################
+
+"""############################ Define Classes #############################"""
 
 
-############################### Define Functions ###############################
+class HeaderFinder(HTMLParser):
+
+    """ . """
+
+    def __init__(self, *args, **kwargs):
+        """ . """
+        HTMLParser.__init__(self)
+        self.header_tags = ["h1", "h2", "h3", "h4", "h5", "h6"]
+        self.headers = {
+            0: OrderedDict(),
+            1: OrderedDict(),
+            2: OrderedDict(),
+            3: OrderedDict(),
+            4: OrderedDict(),
+            5: OrderedDict(),
+            6: OrderedDict(),
+            }
+        self.parents = OrderedDict([
+            (0, None),
+            (1, None),
+            (2, None),
+            (3, None),
+            (4, None),
+            (5, None)
+            ])
+        self.within = False
+        return
+
+    def format_tag(self, tag, attrs=list(), end=False):
+        """ . """
+        attributes = self.format_attributes(attrs)
+        end = "/" if end else ""
+        formatted_tag = "<{}{}{}>".format(end, tag, " ".join(attributes))
+        return formatted_tag
+
+    def format_attributes(self, attrs=list()):
+        """ . """
+        if attrs is None:
+            return ""
+        attributes = ['', ]
+        for k, v in attrs:
+            attibutes.append('{}="{}"'.format(k, v))
+        return attributes
+
+    def format_startendtag(self, tag, attrs=list()):
+        """ . """
+        attributes = self.format_attributes(attrs)
+        formatted_tag = "<{}{} />".format(tag, " ".join(attributes))
+        return formatted_tag
+
+    def get_parent(self, level):
+        """ . """
+        parent = None, None
+        for parent_level, parent_id in self.parents.items():
+            if parent_id is not None and level > parent_level:
+                parent = parent_level, parent_id
+        return parent
+
+    def handle_data(self, data):
+        """ . """
+        if self.within:
+            self.current["content"] += data
+        return
+
+    def handle_startendtag(self, tag, attrs):
+        """ . """
+        if self.within:
+            self.current["content"] += self.format_startendtag(tag, attrs)
+        return
+
+    def handle_starttag(self, tag, attrs):
+        """ . """
+        if tag in self.header_tags:
+            attrs = dict(attrs)
+            id_ = attrs["id"] if 'id' in attrs else ""
+            level = self.header_tags.index(tag)
+
+            self.within = True
+            self.current = {
+                "level": level,
+                "id_": id_,
+                "content": str(),
+                "parent": self.get_parent(level)
+                }
+        elif self.within:
+            self.current["content"] += self.format_tag(tag, attrs)
+        return
+
+    def handle_endtag(self, tag):
+        """ . """
+        id_ = self.current['id_']
+        level = self.current["level"]
+        if tag in self.header_tags:
+            self.within = False
+            self.parents[level] = id_
+
+            # Clear previous children
+            for parent_level, parent_id in self.parents.items():
+                if level < parent_level:
+                    self.parents[parent_level] = None
+            self.headers[level][id_] = self.current
+        elif self.within:
+            self.current["content"] += self.format_tag(tag, end=True)
+        return
+
+    def nested_list(self):
+        """ . """
+        levels = [l for l, v in self.headers.items() if len(v) > 0]
+        nested = list()
+        base_level = levels[0]
+        deepest_level = levels[-1]
+        for level in reversed(levels):
+            for id_, record in self.headers[level].items():
+                parent_level, parent_id = record['parent']
+                if parent_level is None:
+                    parent_level = 0
+                # Add some dummy levels
+                distance = level - parent_level
+                i = 1
+                new_record = record
+                while i < distance:
+                    new_record = {"children": [new_record]}
+                    i += 1
+                if parent_level == 0 and parent_id is None and level != 0:
+                    nested.append({"children": [new_record]})
+                elif level == 0:
+                    nested.append(new_record)
+                elif parent_id is not None:
+                    if 'children' in self.headers[parent_level][parent_id]:
+                        self.headers[parent_level][parent_id][
+                            'children'].append(new_record)
+                    else:
+                        self.headers[parent_level][parent_id][
+                            'children'] = [new_record]
+        return nested
+
+
+"""########################### Define Functions ############################"""
 
 app = Flask(__name__)
 
@@ -114,11 +249,13 @@ def json_date_parser(dct):
 
 
 def format_date(value):
+    """ . """
     return value.strftime("%d %B %Y")
 app.jinja_env.filters['date'] = format_date
 
 
 def format_time(value):
+    """ . """
     return value.strftime("%H:%M")
 app.jinja_env.filters['time'] = format_time
 
@@ -139,16 +276,15 @@ def get_projects(path=projects_html):
     return projects
 
 
-
 def get_posts(path, which=None, verbose=True):
     """ Prepare a list of posts taken from a directory.
 
     Keyword arguments:
     path -- Path to the directory containing blog posts (type str).
-    which -- Specifies which posts to include in the output. 'None' includes all
-        posts, a string will return only the post with an id that matches the
-        string, and a list (or tuple, or set) of strings will include all posts
-        with id's in the list (type:None|str|list, default None).
+    which -- Specifies which posts to include in the output. 'None' includes
+        all posts, a string will return only the post with an id that matches
+        the string, and a list (or tuple, or set) of strings will include all
+        posts with id's in the list (type:None|str|list, default None).
     verbose -- Print information as the function runs (type bool, default True).
 
     Returns:
@@ -197,14 +333,16 @@ def get_posts(path, which=None, verbose=True):
     posts = list()
     required_keys = {'html', 'title', 'date'}
     for key, value in all_files.items():
-        """ If include_test says that we don't need this file, we skip the rest
-        of the current iteration and continue with the next key, value pair. """
+        """ If include_test says that we don't need this file, we skip the
+        rest of the current iteration and continue with the next key, value
+        pair. """
         if not include_test(key):
             continue
         value['id_'] = key.split("-")[-1]
         if 'json' in value:
             with open(value['json'], "rU") as json_handle:
-                value.update(json.load(json_handle, object_hook=json_date_parser))
+                value.update(json.load(json_handle,
+                                       object_hook=json_date_parser))
         elif 'yaml' in value:
             with open(value['yaml'], 'rU') as yaml_handle:
                 value.update(yaml.load(yaml_handle))
@@ -219,8 +357,8 @@ def get_posts(path, which=None, verbose=True):
             if verbose:
                 d = required_keys.difference(required_keys.intersection(value))
                 print(
-                    "Excluded '{}' from posts because it did not ".format(key) +
-                    "have all of the required information. The field(s) " +
+                    "Excluded '{}' from posts because it did not".format(key) +
+                    " have all of the required information. The field(s) " +
                     "'{}' was/were missing.".format("', '".join(list(d)))
                 )
             continue
@@ -236,6 +374,7 @@ def get_posts(path, which=None, verbose=True):
 
 
 def side_nav_dates(posts):
+    """ . """
     posts.sort(key=lambda d: d['date'])
     dates = list()
     new_posts = list()
@@ -255,19 +394,28 @@ def side_nav_dates(posts):
             new_posts.append({"id_": str_year, "type": "date"})
             new_posts.append({"id_": str_ym, "type": "date"})
             new_posts.append(post)
-            dates.append({"target": str_year, "children": [{"value": str_month, "target": str_ym}]})
+            dates.append({
+                "target": str_year,
+                "children": [{"value": str_month, "target": str_ym}]
+                })
         elif year != current_year:
             current_year = year
             current_month = month
             new_posts.append({"id_": str_year, "type": "date"})
             new_posts.append({"id_": str_ym, "type": "date"})
             new_posts.append(post)
-            dates.append({"target": str_year, "children": [{"value": str_month, "target": str_ym}]})
+            dates.append({
+                "target": str_year,
+                "children": [{"value": str_month, "target": str_ym}]
+                })
         elif month != current_month:
             current_month = month
             new_posts.append({"id_": str_ym, "type": "date"})
             new_posts.append(post)
-            dates[-1]["children"].append({"value": str_month, "target": str_ym})
+            dates[-1]["children"].append({
+                "value": str_month,
+                "target": str_ym
+                })
         else:
             new_posts.append(post)
     return new_posts, dates
@@ -278,7 +426,8 @@ def nav(current):
 
     This function is pretty straight-forward. To have the navigation button for
     the currently active page highlighted we convert 'current' to a boolean
-    value so that we can conditionally add an extra class to the Jinja2 template.
+    value so that we can conditionally add an extra class to the Jinja2
+    template.
 
     Keyword arguments:
     current -- The page that is currently active (type str).
@@ -295,7 +444,7 @@ def nav(current):
         },
         {
             "name": "Blog",
-            "path" :url_for('blog'),
+            "path": url_for('blog'),
             "current": (current.lower() in {"blog", "archive", "post"})
         },
         {
@@ -314,20 +463,28 @@ def nav(current):
 
 @app.route('/')
 def index():
+    """ . """
     content = update(path=os.path.join(content_path, "index.json"))
     content['blurb'] = " ".join(content['blurb'])
     return render_template('index.html', nav=nav("Home"), page=content)
+
 
 @app.route('/blog/')
 @app.route('/blog/<post_year>/')
 @app.route('/blog/<post_year>/<post_month>/')
 @app.route('/blog/<post_year>/<post_month>/<post_day>/')
 def blog(post_year=None, post_month=None, post_day=None):
-    filter_dates = {"post_year": post_year, "post_month": post_month, "post_day": post_day}
+    """ . """
+    filter_dates = {
+        "post_year": post_year,
+        "post_month": post_month,
+        "post_day": post_day
+        }
     content = update(path=os.path.join(content_path, "blog.json"))
     posts = get_posts(posts_html)
     current_tags = request.args.getlist("tags")
-    current_tags = [tag for tag in current_tags if current_tags.count(tag) % 2 == 1]
+    current_tags = [tag for tag in current_tags
+                    if current_tags.count(tag) % 2 == 1]
     current_tags = list(set(current_tags))
     if current_tags != request.args.getlist("tags"):
         return redirect(url_for('blog', tags=current_tags, **filter_dates))
@@ -335,18 +492,19 @@ def blog(post_year=None, post_month=None, post_day=None):
     for post in posts:
         if "tags" in post:
             tags.extend(post["tags"])
-        if len(current_tags) > 0 and len(set(post["tags"]).intersection(set(current_tags))) == 0:
+        if len(current_tags) > 0 and \
+                len(set(post["tags"]).intersection(set(current_tags))) == 0:
             posts.remove(post)
             continue
-        if post_year != None:
+        if post_year is not None:
             if str(post["date"].year) != post_year:
                 posts.remove(post)
                 continue
-            if post_month != None:
+            if post_month is not None:
                 if str(post["date"].month) != post_month:
                     posts.remove(post)
                     continue
-                if post_day != None:
+                if post_day is not None:
                     if str(post["date"].day) != post_day:
                         posts.remove(post)
                         continue
@@ -360,19 +518,19 @@ def blog(post_year=None, post_month=None, post_day=None):
 
     posts, dates = side_nav_dates(posts)
 
-    return render_template(
-        'blog.html',
-        nav=nav("Blog"),
-        page=content,
-        posts=posts,
-        current_tags=current_tags,
-        tags=tags,
-        filter_dates=filter_dates,
-        side_nav_dates=dates)
+    return render_template('blog.html',
+                           nav=nav("Blog"),
+                           page=content,
+                           posts=posts,
+                           current_tags=current_tags,
+                           tags=tags,
+                           filter_dates=filter_dates,
+                           side_nav_dates=dates)
 
 
 @app.route('/blog/<post_year>/<post_month>/<post_day>/<post_id>')
 def show_post(post_year, post_month, post_day, post_id):
+    """ . """
     post_name = "-".join([post_year, post_month, post_day, post_id])
     content = update(path=os.path.join(content_path, "archive.json"))
     try:
@@ -381,30 +539,44 @@ def show_post(post_year, post_month, post_day, post_id):
         abort(404)
     with open(post['html'], 'rU') as html_handle:
         post['content'] = html_handle.read()
-    return render_template('post.html', nav=nav("Post"), page=content, post=post)
+    toc_finder = HeaderFinder()
+    toc_finder.feed(post['content'])
+    toc = toc_finder.nested_list()
+    return render_template('post.html',
+                           nav=nav("Post"),
+                           page=content,
+                           post=post,
+                           toc=toc)
 
 
 @app.route('/projects/')
 def projects():
     content = update(path=os.path.join(content_path, "projects.json"))
     projects = get_projects(projects_html)
-    return render_template('projects.html', nav=nav("Projects"), page=content, projects=projects)
+    return render_template('projects.html',
+                           nav=nav("Projects"),
+                           page=content,
+                           projects=projects)
 
 
 @app.route('/about')
 def about():
     content = update(path=os.path.join(content_path, "about.json"))
     content['blurb'] = " ".join(content['blurb'])
-    return render_template('about.html', nav=nav("About"), page=content)
+    return render_template('about.html',
+                           nav=nav("About"),
+                           page=content)
 
 
 @app.errorhandler(404)
 def page_not_found(e):
+    """ . """
     return render_template("404.html", nav=nav("None")), 404
 
 
 @app.route('/termsofuse')
 def termsofuse():
+    """ . """
     terms = {
         "title": "Terms of use",
         "terms": (
@@ -420,7 +592,7 @@ def termsofuse():
         }
     return render_template("termsofuse.html", nav=nav("None"), page=terms)
 
-#################################### Code ####################################
+"""################################# Code #################################"""
 
 if __name__ == '__main__':
     app.run(debug=True)  # host='0.0.0.0' # Ditch debug on production.

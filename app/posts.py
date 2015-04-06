@@ -5,40 +5,39 @@ __version__ = "0.1.0"
 __author__ = "Darcy Jones"
 __date__ = "5 January 2015"
 __author_email__ = "darcy.ab.jones@gmail.com"
-__license__ = """
-################################################################################
+__license__ = """\
+Copyright (C) 2014  Darcy Jones
 
-    Copyright (C) 2014  Darcy Jones
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-################################################################################
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-################################ Import Modules ################################
+"""############################ Import Modules #############################"""
 
+import os
 from os.path import splitext
 from os.path import join
 from os.path import isfile
 from os import listdir
+import re
 from collections import defaultdict
+from collections import OrderedDict
 import json
 import yaml
 from datetime import datetime
 
 
-################################################################################
+"""#########################################################################"""
 
 
 def get_posts(path, which=None, verbose=True):
@@ -46,11 +45,11 @@ def get_posts(path, which=None, verbose=True):
 
     Keyword arguments:
     path -- Path to the directory containing blog posts (type str).
-    which -- Specifies which posts to include in the output. 'None' includes all
-        posts, a string will return only the post with an id that matches the
-        string, and a list (or tuple, or set) of strings will include all posts
-        with id's in the list (type:None|str|list, default None).
-    verbose -- Print information as the function runs (type bool, default True).
+    which -- Specifies which posts to include in the output. 'None' includes
+        all posts, a string will return only the post with an id that matches
+        the string, and a list (or tuple, or set) of strings will include all
+        posts with id's in the list (type None|str|list, default None).
+    verbose -- Print information while running (type bool, default True).
 
     Returns:
     A list of dict objects (type list).
@@ -98,14 +97,17 @@ def get_posts(path, which=None, verbose=True):
     posts = list()
     required_keys = {'html', 'title', 'date'}
     for key, value in all_files.items():
-        """ If include_test says that we don't need this file, we skip the rest
-        of the current iteration and continue with the next key, value pair. """
+        """ If include_test says that we don't need this file, we skip the
+        rest of the current iteration and continue with the next key, value
+        pair. """
         if not include_test(key):
             continue
         value['id_'] = key
         if 'json' in value:
             with open(value['json'], "rU") as json_handle:
-                value.update(json.load(json_handle, object_hook=json_date_parser))
+                value.update(
+                    json.load(json_handle, object_hook=json_date_parser)
+                    )
         elif 'yaml' in value:
             with open(value['yaml'], 'rU') as yaml_handle:
                 value.update(yaml.load(yaml_handle))
@@ -120,7 +122,7 @@ def get_posts(path, which=None, verbose=True):
             if verbose:
                 d = required_keys.difference(required_keys.intersection(value))
                 print(
-                    "Excluded '{}' from posts because it did not ".format(key) +
+                    "Excluded {} from posts because it did not ".format(key) +
                     "have all of the required information. The field(s) " +
                     "'{}' was/were missing.".format("', '".join(list(d)))
                 )
@@ -134,6 +136,7 @@ def get_posts(path, which=None, verbose=True):
     in the future."""
     posts.sort(key=lambda d: d['date'])
     return posts
+
 
 def json_date_parser(dct):
     """ A dirty workaround for parsing dates from JSON files.
@@ -168,11 +171,12 @@ def json_date_parser(dct):
 
 
 def json_date_writer(obj):
+    """ . """
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
-def process_md(md_path):
-    import re
 
+def process_md(md_path):
+    """ . """
     # Boundary is three or more '.' or '-'.
     yaml_boundary = re.compile("(-{3,}|\.{3,})")
     blankline = True
@@ -181,7 +185,7 @@ def process_md(md_path):
     current_yaml = list()
     with open(md_path, 'rU') as md_handle:
         for line in md_handle:
-            if yaml_boundary.match(line.strip()) != None and blankline:
+            if yaml_boundary.match(line.strip()) is not None and blankline:
                 if yaml_block:
                     yaml_block = False
                     yaml.append("\n".join(current_yaml))
@@ -198,8 +202,7 @@ def process_md(md_path):
 
 
 def process_yaml(yaml_list):
-    import yaml
-
+    """ . """
     yaml_dict = dict()
     for yaml_item in reversed(yaml_list):
         yaml_dict.update(yaml.load(yaml_item))
@@ -207,8 +210,7 @@ def process_yaml(yaml_list):
 
 
 def next_md_path(current_path):
-    from os.path import splitext
-
+    """ . """
     current_path = splitext(current_path)[0]
     next_ext = splitext(current_path)[1]
     if next_ext.lower() == '' or next_ext.lower() == '.md':
@@ -219,7 +221,7 @@ def next_md_path(current_path):
 
 
 def generate_dir_path(path, suffix):
-    import os
+    """ . """
     id_ = path.split('.')[0]
     dir_path = "{}-{}".format(id_, suffix)
     # if not os.path.isdir(dir_path):
