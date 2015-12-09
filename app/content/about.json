@@ -6,7 +6,7 @@
       "In the wet lab I am competent in a range of general techniques including PCR, sterile culture of fungi and bacteria, and quarantine management.",
       "My computational experience has thus far focussed on genomics and phylogenetics with toes dipped into proteomics (MSMS post-analysis) and transcriptomics.",
       "I am a competent Python, R, and SQL programmer with plenty of experience working with UNIX based systems and clusters.",
-      "See my projects page and blog for more on the kind of computational work that I do.",
+      "See my projects page and blog for more on the kind of computational work that I do."
   ],
   "education":[
       {
@@ -15,11 +15,11 @@
           "title":"Bachelor of Biological Sciences with Honours",
           "code":"SHBIS",
           "level":"Undergraduate (Honours)",
-          "notes": "I worked with Dr. Kim Plummer to dissect a specific molecular interaction between the fungal phytopathogen \<em\>Venturia inaequalis\</em\> and its apple hosts",
+          "notes": "I worked with Dr. Kim Plummer to dissect a specific molecular interaction between the fungal phytopathogen <em>Venturia inaequalis</em> and its apple hosts",
           "start":"2015-02-02",
           "end":"2015-11-25",
           "grades":[
-              {"code":"BOT4HNA/BOT4HNB","year":2015,"title":"Honours Botany","mark":84},
+              {"code":"BOT4HNA/BOT4HNB","year":2015,"title":"Honours Botany","mark":84}
           ]
       },
       {
