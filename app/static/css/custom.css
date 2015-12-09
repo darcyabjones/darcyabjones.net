@@ -228,7 +228,8 @@ h5 {
 }
 #home-portrait {
   margin-top:3em;
-  align:middle;
+  margin-left: auto;
+  margin-right: auto;
 }
 #home-blog-link {
   margin-top:1em;
