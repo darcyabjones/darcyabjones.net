@@ -227,8 +227,7 @@ h5 {
   text-align:center;
 }
 #home-portrait {
-  width:400px;
-  display:inline;
+  margin-top: 1em;
 }
 #home-blog-link {
   margin-top:1em;
