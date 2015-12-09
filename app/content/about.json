@@ -1,7 +1,12 @@
 {
   "title":"About",
   "blurb":[
-      "I am a biologist and a nerd"
+      "Currently, I am working casually as a research assistant with Dr. Kim Plummer at La Trobe University.",
+      "My research experience includes both wet lab and computational work.",
+      "In the wet lab I am competent in a range of general techniques including PCR, sterile culture of fungi and bacteria, and quarantine management.",
+      "My computational experience has thus far focussed on genomics and phylogenetics with toes dipped into proteomics (MSMS post-analysis) and transcriptomics.",
+      "I am a competent Python, R, and SQL programmer with plenty of experience working with UNIX based systems and clusters.",
+      "See my projects page and blog for more on the kind of computational work that I do."
   ],
   "education":[
       {
@@ -10,7 +15,12 @@
           "title":"Bachelor of Biological Sciences with Honours",
           "code":"SHBIS",
           "level":"Undergraduate (Honours)",
-          "start":"2015-02-02"
+          "notes": "I worked with Dr. Kim Plummer to dissect a specific molecular interaction between the fungal phytopathogen <em>Venturia inaequalis</em> and its apple hosts",
+          "start":"2015-02-02",
+          "end":"2015-11-25",
+          "grades":[
+              {"code":"BOT4HNA/BOT4HNB","year":2015,"title":"Honours Botany","mark":84},
+          ]
       },
       {
           "institution":"La Trobe University",
@@ -164,6 +174,16 @@
       }
   ],
   "conferences":[
+      {
+          "title":"Molecular Plant Pathology Meeting 2015",
+          "role":"Attendee",
+          "start":"2015-12-01",
+          "end":"2015-12-02",
+          "code":"00005",
+          "locations":[
+              {"country":"Australia","city":"Stromlo","postcode":2611,"state":"Canberra","building":"Mount Stromlo Observatory","institution":"The Australian National University"}
+          ]
+      },
       {
           "title":"Australian Pathogen Bioinformatics Symposium",
           "role":"Attendee",
