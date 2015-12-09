@@ -24,6 +24,6 @@ __license__ = """
 ##############################################################################
 """
 
-DEBUG = True
+DEBUG = False
 WTF_CSRF_ENABLED = False
 SECRET_KEY = 'development key'

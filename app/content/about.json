@@ -1,10 +1,10 @@
 {
   "title":"About",
   "blurb":[
-      "Currently, I am working casually as a research assistant with Dr. Kim Plummer at La Trobe University.\n\n",
+      "Currently, I am working casually as a research assistant with Dr. Kim Plummer at La Trobe University.<br />",
       "My research experience includes both wet lab and computational work.",
       "In the wet lab I am competent in a range of general techniques including PCR, sterile culture of fungi and bacteria, and quarantine management.",
-      "My computational experience has thus far focussed on genomics and phylogenetics with toes dipped into proteomics (MSMS post-analysis) and transcriptomics.\n",
+      "My computational experience has thus far focussed on genomics and phylogenetics with toes dipped into proteomics (MSMS post-analysis) and transcriptomics.<br />",
       "I am a competent Python, R, bash, GNU Make, and SQL programmer with plenty of experience working with UNIX based systems and clusters.",
       "Please, see my projects page and blog for more on the kind of computational work that I do."
   ],
